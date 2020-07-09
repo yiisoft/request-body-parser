@@ -113,12 +113,12 @@ final class RequestBodyParser implements MiddlewareInterface
     {
         $contentType = $request->getHeaderLine(Header::CONTENT_TYPE);
         if (is_string($contentType) && trim($contentType) !== '') {
-            if (strpos($contentType, ';') !== false) {
-                $contentTypeParts = explode(';', $contentType);
+            if (str_contains($contentType, ';')) {
+                $contentTypeParts = explode(';', $contentType, 2);
                 return strtolower(trim($contentTypeParts[0]));
-            } else {
-                return strtolower($contentType);
             }
+
+            return strtolower($contentType);
         }
         return null;
     }

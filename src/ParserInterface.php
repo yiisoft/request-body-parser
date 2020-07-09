@@ -8,6 +8,8 @@ interface ParserInterface
 {
     /**
      * @return array|object|null
+     *
+     * @throws ParseException
      */
     public function parse(string $rawBody);
 }
