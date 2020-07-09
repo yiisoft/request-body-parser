@@ -80,7 +80,7 @@ final class RequestBodyParser implements MiddlewareInterface
     {
         $contentType = $this->getContentType($request);
 
-        if (($parser = $this->getParser($contentType)) !== null) {
+        if ($contentType && ($parser = $this->getParser($contentType)) !== null) {
             try {
                 $parsed = $parser->parse((string)$request->getBody());
                 if (!is_null($parsed) && !is_object($parsed) && !is_array($parsed)) {
