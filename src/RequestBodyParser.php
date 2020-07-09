@@ -14,7 +14,7 @@ use Yiisoft\Http\Header;
 use Yiisoft\Http\Status;
 use Yiisoft\Request\Body\Parser\JsonParser;
 
-final class RequestBodyParsers implements MiddlewareInterface
+final class RequestBodyParser implements MiddlewareInterface
 {
     private ResponseFactoryInterface $responseFactory;
     private ContainerInterface $container;

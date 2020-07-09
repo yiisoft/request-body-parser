@@ -15,7 +15,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Di\Container;
 use Yiisoft\Http\Header;
 use Yiisoft\Http\Status;
-use Yiisoft\Request\Body\RequestBodyParsers;
+use Yiisoft\Request\Body\RequestBodyParser;
 
 final class RequestBodyParsersTest extends TestCase
 {
@@ -148,8 +148,8 @@ final class RequestBodyParsersTest extends TestCase
         return new Psr17Factory();
     }
 
-    private function getRequestBodyParsers(Container $container): RequestBodyParsers
+    private function getRequestBodyParsers(Container $container): RequestBodyParser
     {
-        return new RequestBodyParsers($this->getFactory(), $container);
+        return new RequestBodyParser($this->getFactory(), $container);
     }
 }
