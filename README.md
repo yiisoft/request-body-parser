@@ -28,7 +28,7 @@ You can add your own parser by implementing `ParserInterface`, adding it into th
 the middleware:
 
 ```php
-$requestBodyParser = $requestBodyParser->withAddedParser('application/myformat', MyFormatParser::class);
+$requestBodyParser = $requestBodyParser->withParser('application/myformat', MyFormatParser::class);
 ``` 
 
 ### Unit testing
