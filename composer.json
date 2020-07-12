@@ -1,5 +1,5 @@
 {
-    "name": "yiisoft/request-body-parsers",
+    "name": "yiisoft/request-body-parser",
     "type": "library",
     "description": "Middleware for parsing various data formats",
     "keywords": [
@@ -11,11 +11,11 @@
     "homepage": "https://www.yiiframework.com/",
     "license": "BSD-3-Clause",
     "support": {
-        "issues": "https://github.com/yiisoft/request-body-parsers/issues?state=open",
+        "issues": "https://github.com/yiisoft/request-body-parser/issues?state=open",
         "forum": "https://www.yiiframework.com/forum/",
         "wiki": "https://www.yiiframework.com/wiki/",
         "irc": "irc://irc.freenode.net/yii",
-        "source": "https://github.com/yiisoft/request-body-parsers"
+        "source": "https://github.com/yiisoft/request-body-parser"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

@@ -9,16 +9,16 @@ use Yiisoft\Request\Body\ParserInterface;
 
 final class JsonParser implements ParserInterface
 {
-    private bool $assoc;
+    private bool $convertToAssociativeArray;
     private int $depth;
     private int $options;
 
     public function __construct(
-        bool $assoc = true,
+        bool $convertToAssociativeArray = true,
         int $depth = 512,
         int $options = JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_IGNORE
     ) {
-        $this->assoc = $assoc;
+        $this->convertToAssociativeArray = $convertToAssociativeArray;
         $this->depth = $depth;
         $this->options = $options;
     }
@@ -26,7 +26,7 @@ final class JsonParser implements ParserInterface
     public function parse(string $rawBody)
     {
         try {
-            $result = \json_decode($rawBody, $this->assoc, $this->depth, $this->options);
+            $result = \json_decode($rawBody, $this->convertToAssociativeArray, $this->depth, $this->options);
             if (\is_array($result) || \is_object($result)) {
                 return $result;
             }
