@@ -78,9 +78,8 @@ final class RequestBodyParser implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $contentType = $this->getContentType($request);
-
-        if ($contentType && ($parser = $this->getParser($contentType)) !== null) {
+        $parser = $this->getParser($this->getContentType($request));
+        if ($parser !== null) {
             try {
                 $parsed = $parser->parse((string)$request->getBody());
                 if (!is_null($parsed) && !is_object($parsed) && !is_array($parsed)) {
