@@ -72,9 +72,10 @@ final class RequestBodyParser implements MiddlewareInterface
         if ($parser !== null) {
             try {
                 $parsed = $parser->parse((string)$request->getBody());
-                if (!is_null($parsed) && !is_object($parsed) && !is_array($parsed)) {
+                if ($parsed !== null && !is_object($parsed) && !is_array($parsed)) {
+                    $parserClass = get_class($parser);
                     throw new \RuntimeException(
-                        'Request body media type parser return value must be an array, an object, or null'
+                        "$parserClass::parse() return value must be an array, an object, or null."
                     );
                 }
                 $request = $request->withParsedBody($parsed);
