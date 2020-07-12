@@ -82,7 +82,7 @@ final class RequestBodyParsersTest extends TestCase
         $bodyParser = $this
             ->getRequestBodyParsers($container)
             ->withParser($mimeType, $containerId)
-            ->withoutBadRequestResponse();
+            ->ignoreBadRequestBody();
 
         $requestHandler = $this->createHandler();
         $response = $bodyParser->process($this->createMockRequest($mimeType), $requestHandler);

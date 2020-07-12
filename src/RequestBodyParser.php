@@ -22,7 +22,7 @@ final class RequestBodyParser implements MiddlewareInterface
     private array $parsers = [
         'application/json' => JsonParser::class,
     ];
-    private bool $badRequestResponse = true;
+    private bool $ignoreBadRequestBody = false;
 
     public function __construct(ResponseFactoryInterface $responseFactory, ContainerInterface $container)
     {
@@ -59,17 +59,10 @@ final class RequestBodyParser implements MiddlewareInterface
         return $new;
     }
 
-    public function withBadRequestResponse(): self
+    public function ignoreBadRequestBody(): self
     {
         $new = clone $this;
-        $new->badRequestResponse = true;
-        return $new;
-    }
-
-    public function withoutBadRequestResponse(): self
-    {
-        $new = clone $this;
-        $new->badRequestResponse = false;
+        $new->ignoreBadRequestBody = true;
         return $new;
     }
 
@@ -86,7 +79,7 @@ final class RequestBodyParser implements MiddlewareInterface
                 }
                 $request = $request->withParsedBody($parsed);
             } catch (ParserException $e) {
-                if ($this->badRequestResponse) {
+                if (!$this->ignoreBadRequestBody) {
                     $response = $this->responseFactory->createResponse(Status::BAD_REQUEST);
                     $response->getBody()->write(Status::TEXTS[Status::BAD_REQUEST]);
                     return $response;
