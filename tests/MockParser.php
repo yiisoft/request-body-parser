@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Request\Body\Tests;
 
-use Yiisoft\Request\Body\ParseException;
+use Yiisoft\Request\Body\ParserException;
 use Yiisoft\Request\Body\ParserInterface;
 
 final class MockParser implements ParserInterface
@@ -21,7 +21,7 @@ final class MockParser implements ParserInterface
     public function parse(string $rawBody)
     {
         if ($this->throwException) {
-            throw new ParseException();
+            throw new ParserException();
         }
 
         return $this->response;

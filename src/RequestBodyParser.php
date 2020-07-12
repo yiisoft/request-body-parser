@@ -85,7 +85,7 @@ final class RequestBodyParser implements MiddlewareInterface
                     );
                 }
                 $request = $request->withParsedBody($parsed);
-            } catch (ParseException $e) {
+            } catch (ParserException $e) {
                 if ($this->badRequestResponse) {
                     $response = $this->responseFactory->createResponse(Status::BAD_REQUEST);
                     $response->getBody()->write(Status::TEXTS[Status::BAD_REQUEST]);

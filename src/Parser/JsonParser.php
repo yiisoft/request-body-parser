@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Request\Body\Parser;
 
-use Yiisoft\Request\Body\ParseException;
+use Yiisoft\Request\Body\ParserException;
 use Yiisoft\Request\Body\ParserInterface;
 
 final class JsonParser implements ParserInterface
@@ -31,7 +31,7 @@ final class JsonParser implements ParserInterface
                 return $result;
             }
         } catch (\JsonException $e) {
-            throw new ParseException('Invalid JSON data in request body: ' . $e->getMessage());
+            throw new ParserException('Invalid JSON data in request body: ' . $e->getMessage());
         }
 
         return null;

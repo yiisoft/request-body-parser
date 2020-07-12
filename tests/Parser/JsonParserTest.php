@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Request\Body\Tests\Parser;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Request\Body\ParseException;
+use Yiisoft\Request\Body\ParserException;
 use Yiisoft\Request\Body\Parser\JsonParser;
 
 final class JsonParserTest extends TestCase
@@ -31,7 +31,7 @@ final class JsonParserTest extends TestCase
 
     public function testThrownException(): void
     {
-        $this->expectException(ParseException::class);
+        $this->expectException(ParserException::class);
 
         $parser = new JsonParser();
         $parsed = $parser->parse('{"test": invalid json}');
