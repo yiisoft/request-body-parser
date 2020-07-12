@@ -117,7 +117,7 @@ final class RequestBodyParser implements MiddlewareInterface
                 return strtolower(trim($contentTypeParts[0]));
             }
 
-            return strtolower($contentType);
+            return strtolower(trim($contentType));
         }
         return null;
     }
