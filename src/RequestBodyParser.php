@@ -101,9 +101,9 @@ final class RequestBodyParser implements MiddlewareInterface
         return $handler->handle($request);
     }
 
-    private function getParser(string $contentType): ?ParserInterface
+    private function getParser(?string $contentType): ?ParserInterface
     {
-        if (isset($this->parsers[$contentType])) {
+        if ($contentType !== null && array_key_exists($contentType, $this->parsers)) {
             return $this->container->get($this->parsers[$contentType]);
         }
         return null;
