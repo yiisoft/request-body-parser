@@ -36,7 +36,7 @@ final class RequestBodyParser implements MiddlewareInterface
             throw new \InvalidArgumentException('The mime type cannot be an empty string.');
         }
         if ($parserClass === '') {
-            throw new \InvalidArgumentException('The parser class cannot be an empty string!');
+            throw new \InvalidArgumentException('The parser class cannot be an empty string.');
         }
         if (strpos($mimeType, '/') === false) {
             throw new \InvalidArgumentException('Invalid mime type.');
