@@ -18,16 +18,22 @@ final class RequestBodyParser implements MiddlewareInterface
 {
     private ResponseFactoryInterface $responseFactory;
     private ContainerInterface $container;
-
+    private RequestHandlerInterface $badRequestHandler;
     private array $parsers = [
         'application/json' => JsonParser::class,
     ];
     private bool $ignoreBadRequestBody = false;
 
-    public function __construct(ResponseFactoryInterface $responseFactory, ContainerInterface $container)
-    {
+    public function __construct(
+        ResponseFactoryInterface $responseFactory,
+        ContainerInterface $container,
+        RequestHandlerInterface $badRequestHandler = null
+    ) {
         $this->responseFactory = $responseFactory;
         $this->container = $container;
+        $this->badRequestHandler = $badRequestHandler ?? new BadRequestHandler(
+                $container->get(ResponseFactoryInterface::class)
+            );
     }
 
     public function withParser(string $mimeType, string $parserClass): self
@@ -81,9 +87,7 @@ final class RequestBodyParser implements MiddlewareInterface
                 $request = $request->withParsedBody($parsed);
             } catch (ParserException $e) {
                 if (!$this->ignoreBadRequestBody) {
-                    $response = $this->responseFactory->createResponse(Status::BAD_REQUEST);
-                    $response->getBody()->write(Status::TEXTS[Status::BAD_REQUEST]);
-                    return $response;
+                    return $this->badRequestHandler->handle($request);
                 }
             }
         }
@@ -107,7 +111,6 @@ final class RequestBodyParser implements MiddlewareInterface
                 $contentTypeParts = explode(';', $contentType, 2);
                 return strtolower(trim($contentTypeParts[0]));
             }
-
             return strtolower(trim($contentType));
         }
         return null;

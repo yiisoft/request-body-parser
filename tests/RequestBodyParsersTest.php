@@ -37,7 +37,7 @@ final class RequestBodyParsersTest extends TestCase
 
     public function testWithoutParsers(): void
     {
-        $container = new Container();
+        $container = $this->getContainerWithResponseFactory();
         $bodyParser = $this->getRequestBodyParsers($container)->withoutParsers();
 
         $rawBody = '{"test":"value"}';
@@ -50,7 +50,7 @@ final class RequestBodyParsersTest extends TestCase
 
     public function testWithoutParser(): void
     {
-        $container = new Container();
+        $container = $this->getContainerWithResponseFactory();
         $bodyParser = $this->getRequestBodyParsers($container)->withoutParsers('application/json');
 
         $rawBody = '{"test":"value"}';
@@ -63,7 +63,7 @@ final class RequestBodyParsersTest extends TestCase
 
     public function testWithBadRequestResponse(): void
     {
-        $container = new Container();
+        $container = $this->getContainerWithResponseFactory();
         $bodyParser = $this->getRequestBodyParsers($container);
 
         $rawBody = '{"test": invalid json}';
@@ -71,7 +71,8 @@ final class RequestBodyParsersTest extends TestCase
         $requestHandler = $this->createHandler();
         $response = $bodyParser->process($this->createMockRequest('application/json', $rawBody), $requestHandler);
 
-        $this->assertSame($response->getStatusCode(), Status::BAD_REQUEST);
+        $this->assertSame(Status::BAD_REQUEST, $response->getStatusCode());
+        $this->assertSame(Status::TEXTS[Status::BAD_REQUEST], (string)$response->getBody());
     }
 
     public function testWithoutBadRequestResponse(): void
@@ -87,13 +88,42 @@ final class RequestBodyParsersTest extends TestCase
         $requestHandler = $this->createHandler();
         $response = $bodyParser->process($this->createMockRequest($mimeType), $requestHandler);
 
-        $this->assertSame($response->getStatusCode(), Status::OK);
+        $this->assertSame(Status::OK, $response->getStatusCode());
+    }
+
+    public function testWithCustomBadRequestResponse()
+    {
+        $container = $this->getContainerWithResponseFactory();
+
+        $customBody = 'custom response';
+        $badResponseHandler = $this->createCustomBadResponseHandler($customBody);
+
+        $bodyParser = $this->getRequestBodyParsers($container, $badResponseHandler);
+
+        $rawBody = '{"test": invalid json}';
+        $requestHandler = $this->createHandler();
+        $response = $bodyParser->process($this->createMockRequest('application/json', $rawBody), $requestHandler);
+
+        $this->assertSame(Status::BAD_REQUEST, $response->getStatusCode());
+        $this->assertSame($customBody, (string)$response->getBody());
+    }
+
+    private function getContainerWithResponseFactory()
+    {
+        return new Container(
+            [
+                ResponseFactoryInterface::class => static function () {
+                    return new Psr17Factory();
+                },
+            ]
+        );
     }
 
     private function getContainerWithParser(string $id, $expectedOutput, bool $throwException = false): Container
     {
         return new Container(
             [
+                ResponseFactoryInterface::class => $this->createMock(ResponseFactoryInterface::class),
                 $id => new MockParser($expectedOutput, $throwException)
             ]
         );
@@ -148,8 +178,34 @@ final class RequestBodyParsersTest extends TestCase
         return new Psr17Factory();
     }
 
-    private function getRequestBodyParsers(Container $container): RequestBodyParser
-    {
+    private function getRequestBodyParsers(
+        Container $container,
+        RequestHandlerInterface $badRequestHandler = null
+    ): RequestBodyParser {
+        if ($badRequestHandler) {
+            return new RequestBodyParser($this->getFactory(), $container, $badRequestHandler);
+        }
         return new RequestBodyParser($this->getFactory(), $container);
+    }
+
+    private function createCustomBadResponseHandler(string $body): RequestHandlerInterface
+    {
+        return new class($body, new Psr17Factory()) implements RequestHandlerInterface {
+            private string $body;
+            private ResponseFactoryInterface $responseFactory;
+
+            public function __construct(string $body, ResponseFactoryInterface $responseFactory)
+            {
+                $this->body = $body;
+                $this->responseFactory = $responseFactory;
+            }
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                $response = $this->responseFactory->createResponse(Status::BAD_REQUEST);
+                $response->getBody()->write($this->body);
+                return $response;
+            }
+        };
     }
 }
