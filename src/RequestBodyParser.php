@@ -11,7 +11,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Http\Header;
-use Yiisoft\Http\Status;
 use Yiisoft\Request\Body\Parser\JsonParser;
 
 final class RequestBodyParser implements MiddlewareInterface
