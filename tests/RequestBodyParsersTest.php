@@ -7,6 +7,7 @@ namespace Yiisoft\Request\Body\Tests;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -91,7 +92,7 @@ final class RequestBodyParsersTest extends TestCase
         $this->assertSame(Status::OK, $response->getStatusCode());
     }
 
-    public function testWithCustomBadRequestResponse()
+    public function testWithCustomBadRequestResponse(): void
     {
         $container = $this->getContainerWithResponseFactory();
 
@@ -108,7 +109,7 @@ final class RequestBodyParsersTest extends TestCase
         $this->assertSame($customBody, (string)$response->getBody());
     }
 
-    private function getContainerWithResponseFactory()
+    private function getContainerWithResponseFactory(): Container
     {
         return new Container(
             [
@@ -182,10 +183,7 @@ final class RequestBodyParsersTest extends TestCase
         Container $container,
         RequestHandlerInterface $badRequestHandler = null
     ): RequestBodyParser {
-        if ($badRequestHandler) {
-            return new RequestBodyParser($this->getFactory(), $container, $badRequestHandler);
-        }
-        return new RequestBodyParser($this->getFactory(), $container);
+        return new RequestBodyParser($this->getFactory(), $container, $badRequestHandler);
     }
 
     private function createCustomBadResponseHandler(string $body): RequestHandlerInterface
