@@ -15,7 +15,6 @@ use Yiisoft\Request\Body\Parser\JsonParser;
 
 final class RequestBodyParser implements MiddlewareInterface
 {
-    private ResponseFactoryInterface $responseFactory;
     private ContainerInterface $container;
     private RequestHandlerInterface $badRequestHandler;
     private array $parsers = [
@@ -28,11 +27,8 @@ final class RequestBodyParser implements MiddlewareInterface
         ContainerInterface $container,
         RequestHandlerInterface $badRequestHandler = null
     ) {
-        $this->responseFactory = $responseFactory;
         $this->container = $container;
-        $this->badRequestHandler = $badRequestHandler ?? new BadRequestHandler(
-                $container->get(ResponseFactoryInterface::class)
-            );
+        $this->badRequestHandler = $badRequestHandler ?? new BadRequestHandler($responseFactory);
     }
 
     public function withParser(string $mimeType, string $parserClass): self
