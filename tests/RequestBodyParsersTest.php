@@ -7,7 +7,6 @@ namespace Yiisoft\Request\Body\Tests;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -28,7 +27,7 @@ final class RequestBodyParsersTest extends TestCase
         $container = $this->getContainerWithParser($containerId, $expectedOutput);
 
         $mimeType = 'test/test';
-        $bodyParser = $this->getRequestBodyParsers($container)->withParser($mimeType, $containerId);
+        $bodyParser = $this->getRequestBodyParser($container)->withParser($mimeType, $containerId);
 
         $requestHandler = $this->createHandler();
         $bodyParser->process($this->createMockRequest($mimeType), $requestHandler);
@@ -39,7 +38,7 @@ final class RequestBodyParsersTest extends TestCase
     public function testWithoutParsers(): void
     {
         $container = $this->getContainerWithResponseFactory();
-        $bodyParser = $this->getRequestBodyParsers($container)->withoutParsers();
+        $bodyParser = $this->getRequestBodyParser($container)->withoutParsers();
 
         $rawBody = '{"test":"value"}';
 
@@ -52,7 +51,7 @@ final class RequestBodyParsersTest extends TestCase
     public function testWithoutParser(): void
     {
         $container = $this->getContainerWithResponseFactory();
-        $bodyParser = $this->getRequestBodyParsers($container)->withoutParsers('application/json');
+        $bodyParser = $this->getRequestBodyParser($container)->withoutParsers('application/json');
 
         $rawBody = '{"test":"value"}';
 
@@ -65,7 +64,7 @@ final class RequestBodyParsersTest extends TestCase
     public function testWithBadRequestResponse(): void
     {
         $container = $this->getContainerWithResponseFactory();
-        $bodyParser = $this->getRequestBodyParsers($container);
+        $bodyParser = $this->getRequestBodyParser($container);
 
         $rawBody = '{"test": invalid json}';
 
@@ -82,7 +81,7 @@ final class RequestBodyParsersTest extends TestCase
         $container = $this->getContainerWithParser($containerId, '', true);
         $mimeType = 'test/test';
         $bodyParser = $this
-            ->getRequestBodyParsers($container)
+            ->getRequestBodyParser($container)
             ->withParser($mimeType, $containerId)
             ->ignoreBadRequestBody();
 
@@ -99,7 +98,7 @@ final class RequestBodyParsersTest extends TestCase
         $customBody = 'custom response';
         $badResponseHandler = $this->createCustomBadResponseHandler($customBody);
 
-        $bodyParser = $this->getRequestBodyParsers($container, $badResponseHandler);
+        $bodyParser = $this->getRequestBodyParser($container, $badResponseHandler);
 
         $rawBody = '{"test": invalid json}';
         $requestHandler = $this->createHandler();
@@ -107,6 +106,25 @@ final class RequestBodyParsersTest extends TestCase
 
         $this->assertSame(Status::BAD_REQUEST, $response->getStatusCode());
         $this->assertSame($customBody, (string)$response->getBody());
+    }
+
+    public function testThrownExceptionWithNotExistsParser()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The parser "invalidParser" cannot be found.');
+
+        $this->getRequestBodyParser($this->getContainerWithResponseFactory())->withParser('test/test', 'invalidParser');
+    }
+
+    public function testThrownExceptionWithInvalidMimeType()
+    {
+        $containerId = 'testParser';
+        $container = $this->getContainerWithParser($containerId, '');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid mime type.');
+
+        $this->getRequestBodyParser($container)->withParser('invalid mimeType', $containerId);
     }
 
     private function getContainerWithResponseFactory(): Container
@@ -179,7 +197,7 @@ final class RequestBodyParsersTest extends TestCase
         return new Psr17Factory();
     }
 
-    private function getRequestBodyParsers(
+    private function getRequestBodyParser(
         Container $container,
         RequestHandlerInterface $badRequestHandler = null
     ): RequestBodyParser {

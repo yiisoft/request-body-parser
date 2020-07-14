@@ -37,14 +37,17 @@ final class RequestBodyParser implements MiddlewareInterface
 
     public function withParser(string $mimeType, string $parserClass): self
     {
-        if (trim($mimeType) === '') {
-            throw new \InvalidArgumentException('The mime type cannot be an empty string.');
-        }
+        $this->validateMimeType($mimeType);
         if ($parserClass === '') {
             throw new \InvalidArgumentException('The parser class cannot be an empty string.');
         }
+
+        if ($this->container->has($parserClass) === false) {
+            throw new \InvalidArgumentException("The parser \"$parserClass\" cannot be found.");
+        }
+
         $new = clone $this;
-        $new->parsers[strtolower($mimeType)] = $parserClass;
+        $new->parsers[$this->normalizeMimeType($mimeType)] = $parserClass;
         return $new;
     }
 
@@ -56,10 +59,8 @@ final class RequestBodyParser implements MiddlewareInterface
             return $new;
         }
         foreach ($mimeTypes as $mimeType) {
-            if (trim($mimeType) === '') {
-                throw new \InvalidArgumentException('The mime type cannot be an empty string.');
-            }
-            unset($new->parsers[strtolower($mimeType)]);
+            $this->validateMimeType($mimeType);
+            unset($new->parsers[$this->normalizeMimeType($mimeType)]);
         }
         return $new;
     }
@@ -113,5 +114,20 @@ final class RequestBodyParser implements MiddlewareInterface
             return strtolower(trim($contentType));
         }
         return null;
+    }
+
+    /**
+     * @throws \InvalidArgumentException
+     */
+    private function validateMimeType(string $mimeType): void
+    {
+        if (strpos($mimeType, '/') === false) {
+            throw new \InvalidArgumentException('Invalid mime type.');
+        }
+    }
+
+    private function normalizeMimeType(string $mimeType): string
+    {
+        return strtolower(trim($mimeType));
     }
 }
