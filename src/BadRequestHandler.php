@@ -7,12 +7,13 @@ namespace Yiisoft\Request\Body;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
+
 use Yiisoft\Http\Status;
 
-final class BadRequestHandler implements RequestHandlerInterface
+final class BadRequestHandler implements BadRequestHandlerInterface
 {
     private ResponseFactoryInterface $responseFactory;
+    private ?ParserException $parserException = null;
 
     public function __construct(ResponseFactoryInterface $responseFactory)
     {
@@ -23,6 +24,18 @@ final class BadRequestHandler implements RequestHandlerInterface
     {
         $response = $this->responseFactory->createResponse(Status::BAD_REQUEST);
         $response->getBody()->write(Status::TEXTS[Status::BAD_REQUEST]);
+
+        if ($this->parserException !== null) {
+            $response->getBody()->write("\n" . $this->parserException->getMessage());
+        }
+
         return $response;
+    }
+
+    public function withParserException(ParserException $e): BadRequestHandlerInterface
+    {
+        $new = clone $this;
+        $new->parserException = $e;
+        return $new;
     }
 }
