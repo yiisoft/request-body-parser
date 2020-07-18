@@ -15,6 +15,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Di\Container;
 use Yiisoft\Http\Header;
 use Yiisoft\Http\Status;
+use Yiisoft\Request\Body\BadRequestHandlerInterface;
+use Yiisoft\Request\Body\ParserException;
 use Yiisoft\Request\Body\RequestBodyParser;
 
 final class RequestBodyParsersTest extends TestCase
@@ -72,7 +74,7 @@ final class RequestBodyParsersTest extends TestCase
         $response = $bodyParser->process($this->createMockRequest('application/json', $rawBody), $requestHandler);
 
         $this->assertSame(Status::BAD_REQUEST, $response->getStatusCode());
-        $this->assertSame(Status::TEXTS[Status::BAD_REQUEST], (string)$response->getBody());
+        $this->assertSame(Status::TEXTS[Status::BAD_REQUEST] . "\nInvalid JSON data in request body: Syntax error", (string)$response->getBody());
     }
 
     public function testWithoutBadRequestResponse(): void
@@ -160,14 +162,14 @@ final class RequestBodyParsersTest extends TestCase
         return new ServerRequest('POST', '/', [Header::CONTENT_TYPE => $contentType], $body ?? null);
     }
 
-    private function createHandler(): RequestHandlerInterface
+    private function createHandler(): BadRequestHandlerInterface
     {
         $mockResponse = $this->createMock(ResponseInterface::class);
         $mockResponse
             ->method('getStatusCode')
             ->willReturn(Status::OK);
 
-        return new class($mockResponse) implements RequestHandlerInterface {
+        return new class($mockResponse) implements BadRequestHandlerInterface {
             private $requestParsedBody;
             private ResponseInterface $mockResponse;
 
@@ -189,6 +191,12 @@ final class RequestBodyParsersTest extends TestCase
             {
                 return $this->requestParsedBody;
             }
+
+            public function withParserException(ParserException $e): BadRequestHandlerInterface
+            {
+                // do nothing
+                return $this;
+            }
         };
     }
 
@@ -199,14 +207,14 @@ final class RequestBodyParsersTest extends TestCase
 
     private function getRequestBodyParser(
         Container $container,
-        RequestHandlerInterface $badRequestHandler = null
+        BadRequestHandlerInterface $badRequestHandler = null
     ): RequestBodyParser {
         return new RequestBodyParser($this->getFactory(), $container, $badRequestHandler);
     }
 
-    private function createCustomBadResponseHandler(string $body): RequestHandlerInterface
+    private function createCustomBadResponseHandler(string $body): BadRequestHandlerInterface
     {
-        return new class($body, new Psr17Factory()) implements RequestHandlerInterface {
+        return new class($body, new Psr17Factory()) implements BadRequestHandlerInterface {
             private string $body;
             private ResponseFactoryInterface $responseFactory;
 
@@ -221,6 +229,12 @@ final class RequestBodyParsersTest extends TestCase
                 $response = $this->responseFactory->createResponse(Status::BAD_REQUEST);
                 $response->getBody()->write($this->body);
                 return $response;
+            }
+
+            public function withParserException(ParserException $e): BadRequestHandlerInterface
+            {
+                // do nothing
+                return $this;
             }
         };
     }
