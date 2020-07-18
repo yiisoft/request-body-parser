@@ -32,7 +32,7 @@ final class BadRequestHandler implements BadRequestHandlerInterface
         return $response;
     }
 
-    public function withParserException(ParserException $e): self
+    public function withParserException(ParserException $e): BadRequestHandlerInterface
     {
         $new = clone $this;
         $new->parserException = $e;

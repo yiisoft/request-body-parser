@@ -11,5 +11,5 @@ use Psr\Http\Server\RequestHandlerInterface;
 interface BadRequestHandlerInterface extends RequestHandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface;
-    public function withParserException(ParserException $e): self;
+    public function withParserException(ParserException $e): BadRequestHandlerInterface;
 }
