@@ -54,4 +54,12 @@ final class JsonParserTest extends TestCase
 
         $this->assertSame(['test' => 'value', 'invalid' => ''], $parsed);
     }
+
+    public function testEmptyBody(): void
+    {
+        $parser = new JsonParser();
+        $parsed = $parser->parse('');
+
+        $this->assertNull($parsed);
+    }
 }
