@@ -25,6 +25,10 @@ final class JsonParser implements ParserInterface
 
     public function parse(string $rawBody)
     {
+        if ($rawBody === '') {
+            return null;
+        }
+
         try {
             $result = \json_decode($rawBody, $this->convertToAssociativeArray, $this->depth, $this->options);
             if (\is_array($result) || \is_object($result)) {
