@@ -10,9 +10,6 @@ jobs:
   mutation:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
 
-    env:
-      extensions: json
-
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -31,7 +28,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "${{ matrix.php }}"
-          extensions: ${{ env.extensions }}
           ini-values: memory_limit=-1
           coverage: "pcov"
           tools: composer:v2
@@ -46,6 +42,9 @@ jobs:
           key: php${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: |
             php${{ matrix.php }}-composer-
+
+      - name: Update composer
+        run: composer self-update
 
       - name: Install dependencies with composer
         run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
