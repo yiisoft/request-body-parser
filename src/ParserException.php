@@ -6,5 +6,4 @@ namespace Yiisoft\Request\Body;
 
 class ParserException extends \Exception
 {
-
 }

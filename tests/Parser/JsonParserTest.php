@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\Request\Body\Tests\Parser;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Request\Body\ParserException;
 use Yiisoft\Request\Body\Parser\JsonParser;
+use Yiisoft\Request\Body\ParserException;
 
 final class JsonParserTest extends TestCase
 {

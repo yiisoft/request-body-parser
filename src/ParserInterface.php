@@ -13,9 +13,10 @@ interface ParserInterface
      * Parse raw server request body.
      *
      * @param string $rawBody Raw server request body.
-     * @return array|object|null Parsing result.
      *
      * @throws ParserException when parsing can not be done.
+     *
+     * @return array|object|null Parsing result.
      */
     public function parse(string $rawBody);
 }

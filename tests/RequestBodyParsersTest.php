@@ -11,7 +11,6 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Di\Container;
 use Yiisoft\Http\Header;
 use Yiisoft\Http\Status;
@@ -145,7 +144,7 @@ final class RequestBodyParsersTest extends TestCase
         return new Container(
             [
                 ResponseFactoryInterface::class => $this->createMock(ResponseFactoryInterface::class),
-                $id => new MockParser($expectedOutput, $throwException)
+                $id => new MockParser($expectedOutput, $throwException),
             ]
         );
     }
