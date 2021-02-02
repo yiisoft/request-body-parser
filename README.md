@@ -7,7 +7,7 @@
 </p>
 
 The package is [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware that allows parsing [PSR-7](https://www.php-fig.org/psr/psr-7/)
-server request body selecting the parser according to server request mime type.
+server request body selecting the parser according to the server request mime type.
 
 [![Latest Stable Version](https://poser.pugx.org/yiisoft/request-body-parser/v/stable.png)](https://packagist.org/packages/yiisoft/request-body-parser)
 [![Total Downloads](https://poser.pugx.org/yiisoft/request-body-parser/downloads.png)](https://packagist.org/packages/yiisoft/request-body-parser)
@@ -20,7 +20,7 @@ server request body selecting the parser according to server request mime type.
 
 ## General usage
 
-1. Add `RequestBodyParser` into your middleware stack.
+1. Add `RequestBodyParser` to your middleware stack.
 2. Obtain parsed body via `$request->getParsedBody();`.
 
 By default, it parses `application/json` requests where JSON is in the body. 

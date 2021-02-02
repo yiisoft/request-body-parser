@@ -10,6 +10,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 use Yiisoft\Http\Status;
 
+/**
+ * Default handler that is used when there is an error during parsing a request.
+ */
 final class BadRequestHandler implements BadRequestHandlerInterface
 {
     private ResponseFactoryInterface $responseFactory;
