@@ -50,6 +50,7 @@ final class RequestBodyParser implements MiddlewareInterface
      *
      * @param string $mimeType Mime type to register parser for.
      * @param string $parserClass Parser fully qualified name.
+     *
      * @return self
      */
     public function withParser(string $mimeType, string $parserClass): self
@@ -72,6 +73,7 @@ final class RequestBodyParser implements MiddlewareInterface
      * Returns new instance with parsers un-registered for mime types specified.
      *
      * @param string ...$mimeTypes Mime types to unregister parsers for.
+     *
      * @return self
      */
     public function withoutParsers(string ...$mimeTypes): self
@@ -90,6 +92,7 @@ final class RequestBodyParser implements MiddlewareInterface
 
     /**
      * Makes the middleware to simple skip requests it cannot parse.
+     *
      * @return self
      */
     public function ignoreBadRequestBody(): self
