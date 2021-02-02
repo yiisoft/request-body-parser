@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Request\Body\Tests;
 
+use InvalidArgumentException;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +21,7 @@ use Yiisoft\Request\Body\RequestBodyParser;
 
 final class RequestBodyParsersTest extends TestCase
 {
-    public function testAddedRenderer(): void
+    public function testWithParser(): void
     {
         $expectedOutput = ['test' => 'value'];
 
@@ -36,7 +37,17 @@ final class RequestBodyParsersTest extends TestCase
         $this->assertSame($expectedOutput, $requestHandler->getRequestParsedBody());
     }
 
-    public function testWithoutParsers(): void
+    public function testWithParserWithEmptyParserClass(): void
+    {
+        $containerId = 'testParser';
+        $container = $this->getContainerWithParser($containerId, '');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The parser class cannot be an empty string.');
+        $this->getRequestBodyParser($container)->withParser('content/future', '');
+    }
+
+        public function testWithoutParsers(): void
     {
         $container = $this->getContainerWithResponseFactory();
         $bodyParser = $this->getRequestBodyParser($container)->withoutParsers();
@@ -109,20 +120,20 @@ final class RequestBodyParsersTest extends TestCase
         $this->assertSame($customBody, (string)$response->getBody());
     }
 
-    public function testThrownExceptionWithNotExistsParser()
+    public function testThrownExceptionWithNotExistsParser(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The parser "invalidParser" cannot be found.');
 
         $this->getRequestBodyParser($this->getContainerWithResponseFactory())->withParser('test/test', 'invalidParser');
     }
 
-    public function testThrownExceptionWithInvalidMimeType()
+    public function testThrownExceptionWithInvalidMimeType(): void
     {
         $containerId = 'testParser';
         $container = $this->getContainerWithParser($containerId, '');
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid mime type.');
 
         $this->getRequestBodyParser($container)->withParser('invalid mimeType', $containerId);
