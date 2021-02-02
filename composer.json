@@ -17,8 +17,6 @@
         "irc": "irc://irc.freenode.net/yii",
         "source": "https://github.com/yiisoft/request-body-parser"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "require": {
         "php": "^7.4|^8.0",
         "ext-json": "*",
@@ -35,7 +33,7 @@
         "roave/infection-static-analysis-plugin": "^1.5",
         "spatie/phpunit-watcher": "^1.23",
         "vimeo/psalm": "^4.2",
-        "yiisoft/di": "^3.0@dev"
+        "yiisoft/test-support": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -45,11 +43,6 @@
     "autoload-dev": {
         "psr-4": {
             "Yiisoft\\Request\\Body\\Tests\\": "tests"
-        }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "3.0.x-dev"
         }
     },
     "config": {

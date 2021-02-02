@@ -12,12 +12,13 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
-use Yiisoft\Di\Container;
 use Yiisoft\Http\Header;
 use Yiisoft\Http\Status;
 use Yiisoft\Request\Body\BadRequestHandlerInterface;
+use Yiisoft\Request\Body\Parser\JsonParser;
 use Yiisoft\Request\Body\ParserException;
 use Yiisoft\Request\Body\RequestBodyParser;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class RequestBodyParsersTest extends TestCase
 {
@@ -139,20 +140,21 @@ final class RequestBodyParsersTest extends TestCase
         $this->getRequestBodyParser($container)->withParser('invalid mimeType', $containerId);
     }
 
-    private function getContainerWithResponseFactory(): Container
+    private function getContainerWithResponseFactory(): SimpleContainer
     {
-        return new Container(
+        return new SimpleContainer(
             [
                 ResponseFactoryInterface::class => static function () {
                     return new Psr17Factory();
                 },
+                JsonParser::class => new JsonParser(),
             ]
         );
     }
 
-    private function getContainerWithParser(string $id, $expectedOutput, bool $throwException = false): Container
+    private function getContainerWithParser(string $id, $expectedOutput, bool $throwException = false): SimpleContainer
     {
-        return new Container(
+        return new SimpleContainer(
             [
                 ResponseFactoryInterface::class => $this->createMock(ResponseFactoryInterface::class),
                 $id => new MockParser($expectedOutput, $throwException),
@@ -216,7 +218,7 @@ final class RequestBodyParsersTest extends TestCase
     }
 
     private function getRequestBodyParser(
-        Container $container,
+        SimpleContainer $container,
         BadRequestHandlerInterface $badRequestHandler = null
     ): RequestBodyParser {
         return new RequestBodyParser($this->getFactory(), $container, $badRequestHandler);
