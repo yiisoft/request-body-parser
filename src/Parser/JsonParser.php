@@ -23,7 +23,7 @@ final class JsonParser implements ParserInterface
     /**
      * @param bool $convertToAssociativeArray Whether objects should be converted to associative array during parsing.
      * @param int $depth Maximum JSON recursion depth.
-     * @param int|string $options JSON decoding options. {@see json_decode()}.
+     * @param int $options JSON decoding options. {@see json_decode()}.
      */
     public function __construct(
         bool $convertToAssociativeArray = true,
