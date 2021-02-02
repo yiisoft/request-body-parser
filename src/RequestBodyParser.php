@@ -31,6 +31,11 @@ final class RequestBodyParser implements MiddlewareInterface
 {
     private ContainerInterface $container;
     private BadRequestHandlerInterface $badRequestHandler;
+
+    /**
+     * @var string[]
+     * @psalm-var array<string, string>
+     */
     private array $parsers = [
         'application/json' => JsonParser::class,
     ];
@@ -107,6 +112,7 @@ final class RequestBodyParser implements MiddlewareInterface
         $parser = $this->getParser($this->getContentType($request));
         if ($parser !== null) {
             try {
+                /** @var mixed $parsed */
                 $parsed = $parser->parse((string)$request->getBody());
                 if ($parsed !== null && !is_object($parsed) && !is_array($parsed)) {
                     $parserClass = get_class($parser);
@@ -125,6 +131,9 @@ final class RequestBodyParser implements MiddlewareInterface
         return $handler->handle($request);
     }
 
+    /**
+     * @psalm-suppress MixedInferredReturnType, MixedReturnStatement
+     */
     private function getParser(?string $contentType): ?ParserInterface
     {
         if ($contentType !== null && array_key_exists($contentType, $this->parsers)) {
@@ -136,7 +145,7 @@ final class RequestBodyParser implements MiddlewareInterface
     private function getContentType(ServerRequestInterface $request): ?string
     {
         $contentType = $request->getHeaderLine(Header::CONTENT_TYPE);
-        if (is_string($contentType) && trim($contentType) !== '') {
+        if (trim($contentType) !== '') {
             if (str_contains($contentType, ';')) {
                 $contentTypeParts = explode(';', $contentType, 2);
                 return strtolower(trim($contentTypeParts[0]));

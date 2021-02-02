@@ -42,6 +42,7 @@ final class JsonParser implements ParserInterface
         }
 
         try {
+            /** @var mixed $result */
             $result = json_decode($rawBody, $this->convertToAssociativeArray, $this->depth, $this->options);
             if (is_array($result) || is_object($result)) {
                 return $result;
