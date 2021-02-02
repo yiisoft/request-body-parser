@@ -18,7 +18,6 @@ use function array_key_exists;
 use function get_class;
 use function is_array;
 use function is_object;
-use function is_string;
 
 /**
  * The package is a PSR-15 middleware that allows parsing PSR-7 server request body selecting the parser according
