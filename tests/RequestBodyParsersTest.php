@@ -47,7 +47,7 @@ final class RequestBodyParsersTest extends TestCase
         $this->getRequestBodyParser($container)->withParser('content/future', '');
     }
 
-        public function testWithoutParsers(): void
+    public function testWithoutParsers(): void
     {
         $container = $this->getContainerWithResponseFactory();
         $bodyParser = $this->getRequestBodyParser($container)->withoutParsers();
