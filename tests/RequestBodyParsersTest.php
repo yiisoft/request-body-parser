@@ -181,7 +181,7 @@ final class RequestBodyParsersTest extends TestCase
             ->method('getStatusCode')
             ->willReturn(Status::OK);
 
-        return new class($mockResponse) implements BadRequestHandlerInterface {
+        return new class ($mockResponse) implements BadRequestHandlerInterface {
             private $requestParsedBody;
             private ResponseInterface $mockResponse;
 
@@ -226,7 +226,7 @@ final class RequestBodyParsersTest extends TestCase
 
     private function createCustomBadResponseHandler(string $body): BadRequestHandlerInterface
     {
-        return new class($body, new Psr17Factory()) implements BadRequestHandlerInterface {
+        return new class ($body, new Psr17Factory()) implements BadRequestHandlerInterface {
             private string $body;
             private ResponseFactoryInterface $responseFactory;
 
