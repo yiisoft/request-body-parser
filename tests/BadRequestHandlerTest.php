@@ -16,13 +16,17 @@ final class BadRequestHandlerTest extends TestCase
 {
     public function testShouldReturnCode400(): void
     {
-        $response = $this->createHandler()->handle($this->createRequest());
+        $response = $this
+            ->createHandler()
+            ->handle($this->createRequest());
         $this->assertEquals(Status::BAD_REQUEST, $response->getStatusCode());
     }
 
     public function testShouldReturnCorrectErrorInBody(): void
     {
-        $response = $this->createHandler()->handle($this->createRequest());
+        $response = $this
+            ->createHandler()
+            ->handle($this->createRequest());
         $this->assertEquals(Status::TEXTS[Status::BAD_REQUEST], (string)$response->getBody());
     }
 
