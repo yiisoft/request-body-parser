@@ -30,7 +30,9 @@ final class RequestBodyParsersTest extends TestCase
         $container = $this->getContainerWithParser($containerId, $expectedOutput);
 
         $mimeType = 'test/test';
-        $bodyParser = $this->getRequestBodyParser($container)->withParser($mimeType, $containerId);
+        $bodyParser = $this
+            ->getRequestBodyParser($container)
+            ->withParser($mimeType, $containerId);
 
         $requestHandler = $this->createHandler();
         $bodyParser->process($this->createMockRequest($mimeType), $requestHandler);
@@ -45,13 +47,17 @@ final class RequestBodyParsersTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The parser class cannot be an empty string.');
-        $this->getRequestBodyParser($container)->withParser('content/future', '');
+        $this
+            ->getRequestBodyParser($container)
+            ->withParser('content/future', '');
     }
 
     public function testWithoutParsers(): void
     {
         $container = $this->getContainerWithResponseFactory();
-        $bodyParser = $this->getRequestBodyParser($container)->withoutParsers();
+        $bodyParser = $this
+            ->getRequestBodyParser($container)
+            ->withoutParsers();
 
         $rawBody = '{"test":"value"}';
 
@@ -64,7 +70,9 @@ final class RequestBodyParsersTest extends TestCase
     public function testWithoutParser(): void
     {
         $container = $this->getContainerWithResponseFactory();
-        $bodyParser = $this->getRequestBodyParser($container)->withoutParsers('application/json');
+        $bodyParser = $this
+            ->getRequestBodyParser($container)
+            ->withoutParsers('application/json');
 
         $rawBody = '{"test":"value"}';
 
@@ -126,7 +134,9 @@ final class RequestBodyParsersTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The parser "invalidParser" cannot be found.');
 
-        $this->getRequestBodyParser($this->getContainerWithResponseFactory())->withParser('test/test', 'invalidParser');
+        $this
+            ->getRequestBodyParser($this->getContainerWithResponseFactory())
+            ->withParser('test/test', 'invalidParser');
     }
 
     public function testThrownExceptionWithInvalidMimeType(): void
@@ -137,7 +147,9 @@ final class RequestBodyParsersTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid mime type.');
 
-        $this->getRequestBodyParser($container)->withParser('invalid mimeType', $containerId);
+        $this
+            ->getRequestBodyParser($container)
+            ->withParser('invalid mimeType', $containerId);
     }
 
     private function getContainerWithResponseFactory(): SimpleContainer
@@ -239,7 +251,9 @@ final class RequestBodyParsersTest extends TestCase
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $response = $this->responseFactory->createResponse(Status::BAD_REQUEST);
-                $response->getBody()->write($this->body);
+                $response
+                    ->getBody()
+                    ->write($this->body);
                 return $response;
             }
 

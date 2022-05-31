@@ -26,10 +26,14 @@ final class BadRequestHandler implements BadRequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $response = $this->responseFactory->createResponse(Status::BAD_REQUEST);
-        $response->getBody()->write(Status::TEXTS[Status::BAD_REQUEST]);
+        $response
+            ->getBody()
+            ->write(Status::TEXTS[Status::BAD_REQUEST]);
 
         if ($this->parserException !== null) {
-            $response->getBody()->write("\n" . $this->parserException->getMessage());
+            $response
+                ->getBody()
+                ->write("\n" . $this->parserException->getMessage());
         }
 
         return $response;
