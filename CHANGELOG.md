@@ -1,5 +1,9 @@
 # Request body parser change log
 
+## 1.1.1 under development
+
+- no changes in this release.
+
 ## 1.1.0 July 01, 2022
 
 - Chg #18: Update `yiisoft/http` dependency (@devanych)
