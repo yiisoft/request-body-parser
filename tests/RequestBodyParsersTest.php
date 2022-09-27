@@ -156,7 +156,7 @@ final class RequestBodyParsersTest extends TestCase
     {
         return new SimpleContainer(
             [
-                ResponseFactoryInterface::class => static fn() => new Psr17Factory(),
+                ResponseFactoryInterface::class => static fn () => new Psr17Factory(),
                 JsonParser::class => new JsonParser(),
             ]
         );

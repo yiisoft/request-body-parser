@@ -15,7 +15,6 @@ use RuntimeException;
 use Yiisoft\Http\Header;
 use Yiisoft\Request\Body\Parser\JsonParser;
 use function array_key_exists;
-use function get_class;
 use function is_array;
 use function is_object;
 
