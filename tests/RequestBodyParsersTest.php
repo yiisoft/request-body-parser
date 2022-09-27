@@ -156,9 +156,7 @@ final class RequestBodyParsersTest extends TestCase
     {
         return new SimpleContainer(
             [
-                ResponseFactoryInterface::class => static function () {
-                    return new Psr17Factory();
-                },
+                ResponseFactoryInterface::class => static fn () => new Psr17Factory(),
                 JsonParser::class => new JsonParser(),
             ]
         );
@@ -195,11 +193,9 @@ final class RequestBodyParsersTest extends TestCase
 
         return new class ($mockResponse) implements BadRequestHandlerInterface {
             private $requestParsedBody;
-            private ResponseInterface $mockResponse;
 
-            public function __construct(ResponseInterface $mockResponse)
+            public function __construct(private ResponseInterface $mockResponse)
             {
-                $this->mockResponse = $mockResponse;
             }
 
             public function handle(ServerRequestInterface $request): ResponseInterface
@@ -239,13 +235,8 @@ final class RequestBodyParsersTest extends TestCase
     private function createCustomBadResponseHandler(string $body): BadRequestHandlerInterface
     {
         return new class ($body, new Psr17Factory()) implements BadRequestHandlerInterface {
-            private string $body;
-            private ResponseFactoryInterface $responseFactory;
-
-            public function __construct(string $body, ResponseFactoryInterface $responseFactory)
+            public function __construct(private string $body, private ResponseFactoryInterface $responseFactory)
             {
-                $this->body = $body;
-                $this->responseFactory = $responseFactory;
             }
 
             public function handle(ServerRequestInterface $request): ResponseInterface
