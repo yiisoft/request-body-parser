@@ -7,6 +7,7 @@ namespace Yiisoft\Request\Body\Parser;
 use JsonException;
 use Yiisoft\Request\Body\ParserException;
 use Yiisoft\Request\Body\ParserInterface;
+
 use function is_array;
 use function is_object;
 use function json_decode;
