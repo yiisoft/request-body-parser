@@ -24,7 +24,7 @@ final class JsonParserTest extends TestCase
         $object->test = 'value';
 
         $parser = new JsonParser(false);
-        $parsed = $parser->parse(json_encode($object));
+        $parsed = $parser->parse(json_encode($object, JSON_THROW_ON_ERROR));
 
         $this->assertEquals($object, $parsed);
     }
