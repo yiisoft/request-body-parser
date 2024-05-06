@@ -1,4 +1,4 @@
-# Request body parser change log
+# Yii Request Body Parser Change Log
 
 ## 1.1.1 under development
 
