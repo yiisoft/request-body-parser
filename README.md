@@ -6,9 +6,6 @@
     <br>
 </p>
 
-The package is [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware that allows parsing [PSR-7](https://www.php-fig.org/psr/psr-7/)
-server request body selecting the parser according to the server request mime type.
-
 [![Latest Stable Version](https://poser.pugx.org/yiisoft/request-body-parser/v/stable.png)](https://packagist.org/packages/yiisoft/request-body-parser)
 [![Total Downloads](https://poser.pugx.org/yiisoft/request-body-parser/downloads.png)](https://packagist.org/packages/yiisoft/request-body-parser)
 [![Build status](https://github.com/yiisoft/request-body-parser/workflows/build/badge.svg)](https://github.com/yiisoft/request-body-parser/actions?query=workflow%3Abuild)
@@ -17,6 +14,21 @@ server request body selecting the parser according to the server request mime ty
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Frequest-body-parser%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/request-body-parser/master)
 [![static analysis](https://github.com/yiisoft/request-body-parser/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/request-body-parser/actions?query=workflow%3A%22static+analysis%22)
 [![type-coverage](https://shepherd.dev/github/yiisoft/request-body-parser/coverage.svg)](https://shepherd.dev/github/yiisoft/request-body-parser)
+
+The package is [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware that allows parsing [PSR-7](https://www.php-fig.org/psr/psr-7/)
+server request body selecting the parser according to the server request mime type.
+
+## Requirements
+
+- PHP 7.4 or higher.
+
+## Installation
+
+The package could be installed with [Composer](https://getcomposer.org):
+
+```shell
+composer require yiisoft/request-body-parser
+```
 
 ## General usage
 
@@ -32,29 +44,19 @@ the middleware:
 $requestBodyParser = $requestBodyParser->withParser('application/myformat', MyFormatParser::class);
 ``` 
 
-### Unit testing
+## Documentation
 
-The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
+- [Internals](docs/internals.md)
 
-```shell
-./vendor/bin/phpunit
-```
+If you need help or have a question, the [Yii Forum](https://forum.yiiframework.com/c/yii-3-0/63) is a good place for that.
+You may also check out other [Yii Community Resources](https://www.yiiframework.com/community).
 
-### Mutation testing
+## License
 
-The package tests are checked with [Infection](https://infection.github.io/) mutation framework. To run it:
+The Yii Request Body Parser is free software. It is released under the terms of the BSD License.
+Please see [`LICENSE`](./LICENSE.md) for more information.
 
-```shell
-./vendor/bin/infection
-```
-
-### Static analysis
-
-The code is statically analyzed with [Psalm](https://psalm.dev/). To run static analysis:
-
-```shell
-./vendor/bin/psalm
-```
+Maintained by [Yii Software](https://www.yiiframework.com/).
 
 ### Support the project
 
@@ -67,10 +69,3 @@ The code is statically analyzed with [Psalm](https://psalm.dev/). To run static 
 [![Telegram](https://img.shields.io/badge/telegram-join-1DA1F2?style=flat&logo=telegram)](https://t.me/yii3en)
 [![Facebook](https://img.shields.io/badge/facebook-join-1DA1F2?style=flat&logo=facebook&logoColor=ffffff)](https://www.facebook.com/groups/yiitalk)
 [![Slack](https://img.shields.io/badge/slack-join-1DA1F2?style=flat&logo=slack)](https://yiiframework.com/go/slack)
-
-## License
-
-The Yii Request Body Parser is free software. It is released under the terms of the BSD License.
-Please see [`LICENSE`](./LICENSE.md) for more information.
-
-Maintained by [Yii Software](https://www.yiiframework.com/).
