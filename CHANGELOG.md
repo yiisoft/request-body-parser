@@ -1,5 +1,9 @@
 # Yii Request Body Parser Change Log
 
+## 1.1.2 under development
+
+- no changes in this release.
+
 ## 1.1.1 June 03, 2024
 
 - Enh #39: Add support for `psr/http-message` version `^2.0` (@bautrukevich)
