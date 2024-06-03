@@ -2,7 +2,7 @@
 
 ## 1.1.1 under development
 
-- Enh #39: Add support for psr/http-message version ^2.0 (@bautrukevich)
+- Enh #39: Add support for `psr/http-message` version `^2.0` (@bautrukevich)
 
 ## 1.1.0 July 01, 2022
 
