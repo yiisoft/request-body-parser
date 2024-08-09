@@ -6,9 +6,9 @@
     <br>
 </p>
 
-[![Latest Stable Version](https://poser.pugx.org/yiisoft/request-body-parser/v/stable.png)](https://packagist.org/packages/yiisoft/request-body-parser)
-[![Total Downloads](https://poser.pugx.org/yiisoft/request-body-parser/downloads.png)](https://packagist.org/packages/yiisoft/request-body-parser)
-[![Build status](https://github.com/yiisoft/request-body-parser/workflows/build/badge.svg)](https://github.com/yiisoft/request-body-parser/actions?query=workflow%3Abuild)
+[![Latest Stable Version](https://poser.pugx.org/yiisoft/request-body-parser/v)](https://packagist.org/packages/yiisoft/request-body-parser)
+[![Total Downloads](https://poser.pugx.org/yiisoft/request-body-parser/downloads)](https://packagist.org/packages/yiisoft/request-body-parser)
+[![Build status](https://github.com/yiisoft/request-body-parser/actions/workflows/build.yml/badge.svg)](https://github.com/yiisoft/request-body-parser/actions/workflows/build.yml)
 [![Code coverage](https://codecov.io/gh/yiisoft/request-body-parser/graph/badge.svg?token=9TQJWSE5HQ)](https://codecov.io/gh/yiisoft/request-body-parser)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Frequest-body-parser%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/request-body-parser/master)
 [![static analysis](https://github.com/yiisoft/request-body-parser/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/request-body-parser/actions?query=workflow%3A%22static+analysis%22)
