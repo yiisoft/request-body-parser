@@ -15,7 +15,8 @@ use Yiisoft\Http\Status;
  */
 final class BadRequestHandler implements BadRequestHandlerInterface
 {
-    public function __construct(private readonly ResponseFactoryInterface $responseFactory) {
+    public function __construct(private readonly ResponseFactoryInterface $responseFactory)
+    {
     }
 
     public function handle(ServerRequestInterface $request, ?ParserException $e = null): ResponseInterface

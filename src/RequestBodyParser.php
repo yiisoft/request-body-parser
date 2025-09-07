@@ -39,7 +39,8 @@ final class RequestBodyParser implements MiddlewareInterface
     public function __construct(
         private readonly ContainerInterface $container,
         private readonly ?BadRequestHandlerInterface $badRequestHandler = null
-    ) {}
+    ) {
+    }
 
     /**
      * Registers a request parser for a mime type specified.
@@ -83,18 +84,6 @@ final class RequestBodyParser implements MiddlewareInterface
             $this->validateMimeType($mimeType);
             unset($new->parsers[$this->normalizeMimeType($mimeType)]);
         }
-        return $new;
-    }
-
-    /**
-     * Makes the middleware to simple skip requests it cannot parse.
-     *
-     * @return self
-     */
-    public function ignoreBadRequestBody(): self
-    {
-        $new = clone $this;
-        $new->ignoreBadRequestBody = true;
         return $new;
     }
 
