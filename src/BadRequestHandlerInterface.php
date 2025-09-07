@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 namespace Yiisoft\Request\Body;
 
-use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Forms response when there is an error parsing request.
  */
-interface BadRequestHandlerInterface extends RequestHandlerInterface
+interface BadRequestHandlerInterface
 {
     /**
-     * Creates new instance of handler with parser exception set.
+     * Handles a `ParserException` object and produces a response.
      *
      * @param ParserException $e Exception occurred during parsing request.
-     *
-     * @return self
      */
-    public function withParserException(ParserException $e): self;
+    public function handle(ServerRequestInterface $request, ?ParserException $e = null): ResponseInterface;
 }

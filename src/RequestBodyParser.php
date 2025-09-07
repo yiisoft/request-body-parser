@@ -6,7 +6,6 @@ namespace Yiisoft\Request\Body;
 
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -29,9 +28,6 @@ use function is_object;
  */
 final class RequestBodyParser implements MiddlewareInterface
 {
-    private ContainerInterface $container;
-    private BadRequestHandlerInterface $badRequestHandler;
-
     /**
      * @var string[]
      * @psalm-var array<string, string>
@@ -39,16 +35,11 @@ final class RequestBodyParser implements MiddlewareInterface
     private array $parsers = [
         'application/json' => JsonParser::class,
     ];
-    private bool $ignoreBadRequestBody = false;
 
     public function __construct(
-        ResponseFactoryInterface $responseFactory,
-        ContainerInterface $container,
-        BadRequestHandlerInterface $badRequestHandler = null
-    ) {
-        $this->container = $container;
-        $this->badRequestHandler = $badRequestHandler ?? new BadRequestHandler($responseFactory);
-    }
+        private readonly ContainerInterface $container,
+        private readonly ?BadRequestHandlerInterface $badRequestHandler = null
+    ) {}
 
     /**
      * Registers a request parser for a mime type specified.
@@ -122,10 +113,8 @@ final class RequestBodyParser implements MiddlewareInterface
                 }
                 $request = $request->withParsedBody($parsed);
             } catch (ParserException $e) {
-                if (!$this->ignoreBadRequestBody) {
-                    return $this->badRequestHandler
-                        ->withParserException($e)
-                        ->handle($request);
+                if ($this->badRequestHandler !== null) {
+                    return $this->badRequestHandler->handle($request, $e);
                 }
             }
         }

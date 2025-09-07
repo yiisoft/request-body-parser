@@ -15,34 +15,22 @@ use Yiisoft\Http\Status;
  */
 final class BadRequestHandler implements BadRequestHandlerInterface
 {
-    private ResponseFactoryInterface $responseFactory;
-    private ?ParserException $parserException = null;
-
-    public function __construct(ResponseFactoryInterface $responseFactory)
-    {
-        $this->responseFactory = $responseFactory;
+    public function __construct(private readonly ResponseFactoryInterface $responseFactory) {
     }
 
-    public function handle(ServerRequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request, ?ParserException $e = null): ResponseInterface
     {
         $response = $this->responseFactory->createResponse(Status::BAD_REQUEST);
         $response
             ->getBody()
             ->write(Status::TEXTS[Status::BAD_REQUEST]);
 
-        if ($this->parserException !== null) {
+        if ($e !== null) {
             $response
                 ->getBody()
-                ->write("\n" . $this->parserException->getMessage());
+                ->write("\n" . $e->getMessage());
         }
 
         return $response;
-    }
-
-    public function withParserException(ParserException $e): BadRequestHandlerInterface
-    {
-        $new = clone $this;
-        $new->parserException = $e;
-        return $new;
     }
 }
