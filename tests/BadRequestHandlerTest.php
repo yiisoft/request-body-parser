@@ -20,6 +20,7 @@ final class BadRequestHandlerTest extends TestCase
         $response = $this
             ->createHandler()
             ->handle($this->createRequest());
+
         $this->assertEquals(Status::BAD_REQUEST, $response->getStatusCode());
         $this->assertEquals(Status::TEXTS[Status::BAD_REQUEST], (string)$response->getBody());
     }
@@ -30,6 +31,7 @@ final class BadRequestHandlerTest extends TestCase
         $response = $this
             ->createHandler()
             ->handle($this->createRequest(), $e);
+
         $this->assertEquals(Status::BAD_REQUEST, $response->getStatusCode());
         $this->assertEquals(Status::TEXTS[Status::BAD_REQUEST] . "\n" . $e->getMessage(), (string)$response->getBody());
     }

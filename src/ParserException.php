@@ -7,6 +7,6 @@ namespace Yiisoft\Request\Body;
 /**
  * Exception during parsing request.
  */
-class ParserException extends \RuntimeException
+final class ParserException extends \RuntimeException
 {
 }

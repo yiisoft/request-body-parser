@@ -36,10 +36,39 @@ final class RequestBodyParser implements MiddlewareInterface
         'application/json' => JsonParser::class,
     ];
 
+    /**
+     * @param ContainerInterface $container PSR-11 container to create parsers.
+     * @param BadRequestHandlerInterface|null $badRequestHandler Handler for request parsing errors.
+     * If set to `null`, the request will continue processing unaltered. Defaults to `null`.
+     */
     public function __construct(
         private readonly ContainerInterface $container,
         private readonly ?BadRequestHandlerInterface $badRequestHandler = null
     ) {
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        $parser = $this->getParser($this->getContentType($request));
+        if ($parser !== null) {
+            try {
+                /** @var mixed $parsed */
+                $parsed = $parser->parse((string)$request->getBody());
+                if ($parsed !== null && !is_object($parsed) && !is_array($parsed)) {
+                    $parserClass = get_class($parser);
+                    throw new RuntimeException(
+                        "$parserClass::parse() return value must be an array, an object, or null."
+                    );
+                }
+                $request = $request->withParsedBody($parsed);
+            } catch (ParserException $e) {
+                if ($this->badRequestHandler !== null) {
+                    return $this->badRequestHandler->handle($request, $e);
+                }
+            }
+        }
+
+        return $handler->handle($request);
     }
 
     /**
@@ -85,30 +114,6 @@ final class RequestBodyParser implements MiddlewareInterface
             unset($new->parsers[$this->normalizeMimeType($mimeType)]);
         }
         return $new;
-    }
-
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
-        $parser = $this->getParser($this->getContentType($request));
-        if ($parser !== null) {
-            try {
-                /** @var mixed $parsed */
-                $parsed = $parser->parse((string)$request->getBody());
-                if ($parsed !== null && !is_object($parsed) && !is_array($parsed)) {
-                    $parserClass = get_class($parser);
-                    throw new RuntimeException(
-                        "$parserClass::parse() return value must be an array, an object, or null."
-                    );
-                }
-                $request = $request->withParsedBody($parsed);
-            } catch (ParserException $e) {
-                if ($this->badRequestHandler !== null) {
-                    return $this->badRequestHandler->handle($request, $e);
-                }
-            }
-        }
-
-        return $handler->handle($request);
     }
 
     /**

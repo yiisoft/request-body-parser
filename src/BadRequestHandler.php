@@ -7,7 +7,6 @@ namespace Yiisoft\Request\Body;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-
 use Yiisoft\Http\Status;
 
 /**

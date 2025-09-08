@@ -18,12 +18,13 @@ use function json_decode;
 final class JsonParser implements ParserInterface
 {
     private bool $convertToAssociativeArray;
+    /** @var int<1, 2147483647> */
     private int $depth;
     private int $options;
 
     /**
      * @param bool $convertToAssociativeArray Whether objects should be converted to associative array during parsing.
-     * @param int $depth Maximum JSON recursion depth.
+     * @param int<1, 2147483647> $depth Maximum JSON recursion depth.
      * @param int $options JSON decoding options. {@see json_decode()}.
      */
     public function __construct(

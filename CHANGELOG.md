@@ -3,6 +3,7 @@
 ## 1.1.2 under development
 
 - Enh #43: Refactor `RequestBodyParser` middleware fallback handling (@olegbaturin)
+- Chg #43: Change PHP constraint in composer.json to 8.1 - 8.4 (@olegbaturin)
 
 ## 1.1.1 June 03, 2024
 
