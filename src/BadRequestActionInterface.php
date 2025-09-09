@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Forms response when there is an error parsing request.
  */
-interface BadRequestHandlerInterface
+interface BadRequestActionInterface
 {
     /**
      * Handles a `ParserException` object and produces a response.

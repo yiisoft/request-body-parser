@@ -38,12 +38,12 @@ final class RequestBodyParser implements MiddlewareInterface
 
     /**
      * @param ContainerInterface $container PSR-11 container to create parsers.
-     * @param BadRequestHandlerInterface|null $badRequestHandler Handler for request parsing errors.
-     * If set to `null`, the request will continue processing unaltered. Defaults to `null`.
+     * @param BadRequestActionInterface|null $badRequestAction Handler for request parsing errors.
+     * If set to `null`, the request will continue processing unaltered.
      */
     public function __construct(
         private readonly ContainerInterface $container,
-        private readonly ?BadRequestHandlerInterface $badRequestHandler = null
+        private readonly BadRequestActionInterface|null $badRequestAction
     ) {
     }
 
@@ -62,8 +62,8 @@ final class RequestBodyParser implements MiddlewareInterface
                 }
                 $request = $request->withParsedBody($parsed);
             } catch (ParserException $e) {
-                if ($this->badRequestHandler !== null) {
-                    return $this->badRequestHandler->handle($request, $e);
+                if ($this->badRequestAction !== null) {
+                    return $this->badRequestAction->handle($request, $e);
                 }
             }
         }

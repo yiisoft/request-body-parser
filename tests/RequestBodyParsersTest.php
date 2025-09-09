@@ -15,8 +15,8 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Http\Header;
 use Yiisoft\Http\Status;
-use Yiisoft\Request\Body\BadRequestHandler;
-use Yiisoft\Request\Body\BadRequestHandlerInterface;
+use Yiisoft\Request\Body\BadRequestAction;
+use Yiisoft\Request\Body\BadRequestActionInterface;
 use Yiisoft\Request\Body\Parser\JsonParser;
 use Yiisoft\Request\Body\ParserException;
 use Yiisoft\Request\Body\RequestBodyParser;
@@ -218,19 +218,19 @@ final class RequestBodyParsersTest extends TestCase
 
     private function getRequestBodyParser(
         SimpleContainer $container,
-        BadRequestHandlerInterface $badRequestHandler = null
+        BadRequestActionInterface $badRequestAction = null
     ): RequestBodyParser {
-        return new RequestBodyParser($container, $badRequestHandler);
+        return new RequestBodyParser($container, $badRequestAction);
     }
 
-    private function createDefaultBadResponseHandler(): BadRequestHandler
+    private function createDefaultBadResponseHandler(): BadRequestAction
     {
-        return new BadRequestHandler(new Psr17Factory());
+        return new BadRequestAction(new Psr17Factory());
     }
 
-    private function createCustomBadResponseHandler(string $body): BadRequestHandlerInterface
+    private function createCustomBadResponseHandler(string $body): BadRequestActionInterface
     {
-        return new class ($body, new Psr17Factory()) implements BadRequestHandlerInterface {
+        return new class ($body, new Psr17Factory()) implements BadRequestActionInterface {
             private string $body;
             private ResponseFactoryInterface $responseFactory;
 
