@@ -12,7 +12,7 @@ use Yiisoft\Http\Status;
 /**
  * Default handler that is used when there is an error during parsing a request.
  */
-final class BadRequestAction implements BadRequestActionInterface
+final class BadRequestHandler implements BadRequestHandlerInterface
 {
     public function __construct(private readonly ResponseFactoryInterface $responseFactory)
     {

@@ -10,10 +10,10 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
-use Yiisoft\Request\Body\BadRequestAction;
+use Yiisoft\Request\Body\BadRequestHandler;
 use Yiisoft\Request\Body\ParserException;
 
-final class BadRequestActionTest extends TestCase
+final class BadRequestHandlerTest extends TestCase
 {
     public function testShouldReturnCode400AndCorrectErrorInBody(): void
     {
@@ -36,9 +36,9 @@ final class BadRequestActionTest extends TestCase
         $this->assertEquals(Status::TEXTS[Status::BAD_REQUEST] . "\n" . $e->getMessage(), (string)$response->getBody());
     }
 
-    private function createHandler(): BadRequestAction
+    private function createHandler(): BadRequestHandler
     {
-        return new BadRequestAction(new Psr17Factory());
+        return new BadRequestHandler(new Psr17Factory());
     }
 
     private function createRequest(string $uri = '/'): ServerRequestInterface
