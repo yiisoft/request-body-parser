@@ -57,6 +57,14 @@
             "Yiisoft\\Request\\Body\\Tests\\": "tests"
         }
     },
+    "extra": {
+        "config-plugin-options": {
+            "source-directory": "config"
+        },
+        "config-plugin": {
+            "di-web": "di-web.php"
+        }
+    },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
