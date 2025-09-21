@@ -177,11 +177,38 @@ final class RequestBodyParsersTest extends TestCase
         $catcher = new RequestCatcher();
 
         $middleware->process($request, $catcher);
-
-        $this->assertTrue($catcher->isCaught());
-
         $request = $catcher->getRequest();
+
         $this->assertSame(['test' => 'value'], $request->getParsedBody());
+    }
+
+    public function testRequestWithoutContentType(): void
+    {
+        $middleware = new RequestBodyParser(
+            new ResponseFactory(),
+            new SimpleContainer([JsonParser::class => new JsonParser()]),
+        );
+        $request = new ServerRequest(
+            body: (new StreamFactory())->createStream('{"test":"value"}'),
+        );
+        $catcher = new RequestCatcher();
+
+        $middleware->process($request, $catcher);
+        $request = $catcher->getRequest();
+
+        $this->assertSame('{"test":"value"}', (string) $request->getBody());
+        $this->assertNull($request->getParsedBody());
+    }
+
+    public function testImmutability(): void
+    {
+        $middleware = new RequestBodyParser(
+            new ResponseFactory(),
+            new SimpleContainer([JsonParser::class => new JsonParser()]),
+        );
+        $this->assertNotSame($middleware, $middleware->ignoreBadRequestBody());
+        $this->assertNotSame($middleware, $middleware->withoutParsers());
+        $this->assertNotSame($middleware, $middleware->withParser('myapp/json', JsonParser::class));
     }
 
     private function getContainerWithResponseFactory(): SimpleContainer
