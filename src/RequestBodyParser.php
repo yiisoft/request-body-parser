@@ -44,7 +44,7 @@ final class RequestBodyParser implements MiddlewareInterface
     public function __construct(
         ResponseFactoryInterface $responseFactory,
         ContainerInterface $container,
-        BadRequestHandlerInterface $badRequestHandler = null
+        BadRequestHandlerInterface|null $badRequestHandler = null
     ) {
         $this->container = $container;
         $this->badRequestHandler = $badRequestHandler ?? new BadRequestHandler($responseFactory);

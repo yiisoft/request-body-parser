@@ -174,7 +174,7 @@ final class RequestBodyParsersTest extends TestCase
         );
     }
 
-    private function createMockRequest(string $contentType, string $rawBody = null): ServerRequestInterface
+    private function createMockRequest(string $contentType, string|null $rawBody = null): ServerRequestInterface
     {
         if ($rawBody !== null) {
             $body = $this->createMock(StreamInterface::class);
@@ -231,7 +231,7 @@ final class RequestBodyParsersTest extends TestCase
 
     private function getRequestBodyParser(
         SimpleContainer $container,
-        BadRequestHandlerInterface $badRequestHandler = null
+        BadRequestHandlerInterface|null $badRequestHandler = null
     ): RequestBodyParser {
         return new RequestBodyParser($this->getFactory(), $container, $badRequestHandler);
     }
