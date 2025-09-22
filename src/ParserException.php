@@ -6,6 +6,8 @@ namespace Yiisoft\Request\Body;
 
 /**
  * Exception during parsing request.
+ *
+ * @psalm-suppress ClassMustBeFinal We want to allow extending this exception.
  */
 class ParserException extends \RuntimeException
 {

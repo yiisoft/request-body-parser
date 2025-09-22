@@ -18,6 +18,7 @@ use function json_decode;
 final class JsonParser implements ParserInterface
 {
     private bool $convertToAssociativeArray;
+    /** @psalm-var int<1, 2147483647>  */
     private int $depth;
     private int $options;
 
@@ -25,6 +26,8 @@ final class JsonParser implements ParserInterface
      * @param bool $convertToAssociativeArray Whether objects should be converted to associative array during parsing.
      * @param int $depth Maximum JSON recursion depth.
      * @param int $options JSON decoding options. {@see json_decode()}.
+     *
+     * @psalm-param int<1, 2147483647> $depth
      */
     public function __construct(
         bool $convertToAssociativeArray = true,
@@ -43,7 +46,6 @@ final class JsonParser implements ParserInterface
         }
 
         try {
-            /** @var mixed $result */
             $result = json_decode($rawBody, $this->convertToAssociativeArray, $this->depth, $this->options);
             if (is_array($result) || is_object($result)) {
                 return $result;
