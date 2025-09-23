@@ -14,12 +14,11 @@ use Yiisoft\Http\Status;
  */
 final class BadRequestHandler implements BadRequestHandlerInterface
 {
-    private ResponseFactoryInterface $responseFactory;
     private ?ParserException $parserException = null;
 
-    public function __construct(ResponseFactoryInterface $responseFactory)
-    {
-        $this->responseFactory = $responseFactory;
+    public function __construct(
+        private readonly ResponseFactoryInterface $responseFactory,
+    ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface

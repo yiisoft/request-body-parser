@@ -16,7 +16,6 @@ use Yiisoft\Http\Header;
 use Yiisoft\Request\Body\Parser\JsonParser;
 
 use function array_key_exists;
-use function get_class;
 use function is_array;
 use function is_object;
 
@@ -29,7 +28,6 @@ use function is_object;
  */
 final class RequestBodyParser implements MiddlewareInterface
 {
-    private ContainerInterface $container;
     private BadRequestHandlerInterface $badRequestHandler;
 
     /**
@@ -43,10 +41,9 @@ final class RequestBodyParser implements MiddlewareInterface
 
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        ContainerInterface $container,
+        private readonly ContainerInterface $container,
         BadRequestHandlerInterface|null $badRequestHandler = null
     ) {
-        $this->container = $container;
         $this->badRequestHandler = $badRequestHandler ?? new BadRequestHandler($responseFactory);
     }
 
@@ -115,7 +112,7 @@ final class RequestBodyParser implements MiddlewareInterface
                 /** @var mixed $parsed */
                 $parsed = $parser->parse((string)$request->getBody());
                 if ($parsed !== null && !is_object($parsed) && !is_array($parsed)) {
-                    $parserClass = get_class($parser);
+                    $parserClass = $parser::class;
                     throw new RuntimeException(
                         "$parserClass::parse() return value must be an array, an object, or null."
                     );
@@ -162,7 +159,7 @@ final class RequestBodyParser implements MiddlewareInterface
      */
     private function validateMimeType(string $mimeType): void
     {
-        if (strpos($mimeType, '/') === false) {
+        if (!str_contains($mimeType, '/')) {
             throw new InvalidArgumentException('Invalid mime type.');
         }
     }

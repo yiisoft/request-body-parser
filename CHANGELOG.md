@@ -7,6 +7,9 @@
 - Enh #44: Add psalm type `int<1, 2147483647>` to `depth` parameter in `JsonParser` constructor (@vjik)
 - Bug #44: Explicitly mark nullable parameters (@vjik)
 - Bug #46: Explicitly add transitive dependency `psr/http-factory` (@vjik)
+- Enh #47: Use promoted readonly properties in `JsonParser`, `BadRequestHandler` and `RequestBodyParser` classes (@vjik)
+- Enh #47: Minor refactor `RequestBodyParser`: use `str_contains()` function instead of `strpos()` and `::class` instead
+  of `get_class()` (@vjik)
 
 ## 1.1.1 June 03, 2024
 
