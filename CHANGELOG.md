@@ -6,6 +6,7 @@
 - Chg #44: Change PHP constraint in composer.json to `8.1 - 8.4` (@vjik)
 - Enh #44: Add psalm type `int<1, 2147483647>` to `depth` parameter in `JsonParser` constructor (@vjik)
 - Bug #44: Explicitly mark nullable parameters (@vjik)
+- Bug #46: Explicitly add transitive dependency `psr/http-factory` (@vjik)
 
 ## 1.1.1 June 03, 2024
 
