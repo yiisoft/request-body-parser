@@ -1,5 +1,9 @@
 # Yii Request Body Parser Change Log
 
+## 1.2.1 under development
+
+- no changes in this release.
+
 ## 1.2.0 September 23, 2025
 
 - Chg #44: Bump minimum PHP version to 8.1 (@vjik)
