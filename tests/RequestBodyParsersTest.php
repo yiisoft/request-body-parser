@@ -226,8 +226,7 @@ final class RequestBodyParsersTest extends TestCase
         string $id,
         array|object|null $expectedOutput = null,
         bool $throwException = false,
-    ): SimpleContainer
-    {
+    ): SimpleContainer {
         return new SimpleContainer(
             [
                 ResponseFactoryInterface::class => $this->createMock(ResponseFactoryInterface::class),
@@ -293,8 +292,7 @@ final class RequestBodyParsersTest extends TestCase
             public function __construct(
                 private readonly string $body,
                 private readonly ResponseFactoryInterface $responseFactory
-            )
-            {
+            ) {
             }
 
             public function handle(ServerRequestInterface $request): ResponseInterface
