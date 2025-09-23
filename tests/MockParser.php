@@ -9,13 +9,10 @@ use Yiisoft\Request\Body\ParserInterface;
 
 final class MockParser implements ParserInterface
 {
-    private $response;
-    private bool $throwException;
-
-    public function __construct($response, bool $throwException)
-    {
-        $this->response = $response;
-        $this->throwException = $throwException;
+    public function __construct(
+        private readonly array|object|null $response,
+        private readonly bool $throwException,
+    ) {
     }
 
     public function parse(string $rawBody)

@@ -45,7 +45,7 @@ final class RequestBodyParsersTest extends TestCase
     public function testWithParserWithEmptyParserClass(): void
     {
         $containerId = 'testParser';
-        $container = $this->getContainerWithParser($containerId, '');
+        $container = $this->getContainerWithParser($containerId);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The parser class cannot be an empty string.');
@@ -101,7 +101,7 @@ final class RequestBodyParsersTest extends TestCase
     public function testWithoutBadRequestResponse(): void
     {
         $containerId = 'test';
-        $container = $this->getContainerWithParser($containerId, '', true);
+        $container = $this->getContainerWithParser($containerId, throwException: true);
         $mimeType = 'test/test';
         $bodyParser = $this
             ->getRequestBodyParser($container)
@@ -144,7 +144,7 @@ final class RequestBodyParsersTest extends TestCase
     public function testThrownExceptionWithInvalidMimeType(): void
     {
         $containerId = 'testParser';
-        $container = $this->getContainerWithParser($containerId, '');
+        $container = $this->getContainerWithParser($containerId);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid mime type.');
@@ -222,7 +222,11 @@ final class RequestBodyParsersTest extends TestCase
         );
     }
 
-    private function getContainerWithParser(string $id, $expectedOutput, bool $throwException = false): SimpleContainer
+    private function getContainerWithParser(
+        string $id,
+        array|object|null $expectedOutput = null,
+        bool $throwException = false,
+    ): SimpleContainer
     {
         return new SimpleContainer(
             [
@@ -250,12 +254,11 @@ final class RequestBodyParsersTest extends TestCase
             ->willReturn(Status::OK);
 
         return new class ($mockResponse) implements BadRequestHandlerInterface {
-            private $requestParsedBody;
-            private ResponseInterface $mockResponse;
+            private array|object|null $requestParsedBody;
 
-            public function __construct(ResponseInterface $mockResponse)
-            {
-                $this->mockResponse = $mockResponse;
+            public function __construct(
+                private readonly ResponseInterface $mockResponse,
+            ) {
             }
 
             public function handle(ServerRequestInterface $request): ResponseInterface
@@ -264,10 +267,7 @@ final class RequestBodyParsersTest extends TestCase
                 return $this->mockResponse;
             }
 
-            /**
-             * @return array|object|null
-             */
-            public function getRequestParsedBody()
+            public function getRequestParsedBody(): array|object|null
             {
                 return $this->requestParsedBody;
             }
@@ -290,21 +290,17 @@ final class RequestBodyParsersTest extends TestCase
     private function createCustomBadResponseHandler(string $body): BadRequestHandlerInterface
     {
         return new class ($body, new ResponseFactory()) implements BadRequestHandlerInterface {
-            private string $body;
-            private ResponseFactoryInterface $responseFactory;
-
-            public function __construct(string $body, ResponseFactoryInterface $responseFactory)
+            public function __construct(
+                private readonly string $body,
+                private readonly ResponseFactoryInterface $responseFactory
+            )
             {
-                $this->body = $body;
-                $this->responseFactory = $responseFactory;
             }
 
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $response = $this->responseFactory->createResponse(Status::BAD_REQUEST);
-                $response
-                    ->getBody()
-                    ->write($this->body);
+                $response->getBody()->write($this->body);
                 return $response;
             }
 
