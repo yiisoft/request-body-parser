@@ -7,8 +7,8 @@ on:
       - '.gitignore'
       - '.gitattributes'
       - 'infection.json.dist'
+      - 'phpunit.xml.dist'
       - 'psalm.xml'
-
   push:
     branches: ['master']
     paths-ignore:
@@ -18,17 +18,16 @@ on:
       - '.gitignore'
       - '.gitattributes'
       - 'infection.json.dist'
+      - 'phpunit.xml.dist'
       - 'psalm.xml'
 
-name: build
+name: backwards compatibility
 
 jobs:
-  phpunit:
-    uses: yiisoft/actions/.github/workflows/phpunit.yml@master
-    secrets:
-      codecovToken: ${{ secrets.CODECOV_TOKEN }}
+  roave_bc_check:
+    uses: yiisoft/actions/.github/workflows/bc.yml@master
     with:
       os: >-
-        ['ubuntu-latest', 'windows-latest']
+        ['ubuntu-latest']
       php: >-
-        ['8.1', '8.2', '8.3', '8.4']
+        ['8.4']

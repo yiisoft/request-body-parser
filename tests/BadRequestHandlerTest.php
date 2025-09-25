@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Yiisoft\Request\Body\Tests;
 
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7\ServerRequest;
+use HttpSoft\Message\ResponseFactory;
+use HttpSoft\Message\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
 use Yiisoft\Request\Body\BadRequestHandler;
 use Yiisoft\Request\Body\ParserException;
@@ -38,11 +37,11 @@ final class BadRequestHandlerTest extends TestCase
 
     private function createHandler(): BadRequestHandler
     {
-        return new BadRequestHandler(new Psr17Factory());
+        return new BadRequestHandler(new ResponseFactory());
     }
 
     private function createRequest(string $uri = '/'): ServerRequestInterface
     {
-        return new ServerRequest(Method::GET, $uri);
+        return new ServerRequest(uri: $uri);
     }
 }

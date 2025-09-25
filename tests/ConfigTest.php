@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Request\Body\Tests;
 
-use Nyholm\Psr7\Factory\Psr17Factory;
+use HttpSoft\Message\ResponseFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Yiisoft\Di\Container;
@@ -28,7 +28,7 @@ final class ConfigTest extends TestCase
     {
         return new Container(
             ContainerConfig::create()->withDefinitions([
-                ResponseFactoryInterface::class => Psr17Factory::class,
+                ResponseFactoryInterface::class => ResponseFactory::class,
                 ...$this->getContainerDefinitions(),
             ])
         );

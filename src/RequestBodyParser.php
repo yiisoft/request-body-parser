@@ -15,9 +15,13 @@ use Yiisoft\Http\Header;
 use Yiisoft\Request\Body\Parser\JsonParser;
 
 use function array_key_exists;
-use function get_class;
+use function count;
+use function explode;
 use function is_array;
 use function is_object;
+use function str_contains;
+use function strtolower;
+use function trim;
 
 /**
  * The package is a PSR-15 middleware that allows parsing PSR-7 server request body selecting the parser according
@@ -55,7 +59,7 @@ final class RequestBodyParser implements MiddlewareInterface
                 /** @var mixed $parsed */
                 $parsed = $parser->parse((string)$request->getBody());
                 if ($parsed !== null && !is_object($parsed) && !is_array($parsed)) {
-                    $parserClass = get_class($parser);
+                    $parserClass = $parser::class;
                     throw new RuntimeException(
                         "$parserClass::parse() return value must be an array, an object, or null."
                     );
@@ -145,7 +149,7 @@ final class RequestBodyParser implements MiddlewareInterface
      */
     private function validateMimeType(string $mimeType): void
     {
-        if (strpos($mimeType, '/') === false) {
+        if (!str_contains($mimeType, '/')) {
             throw new InvalidArgumentException('Invalid mime type.');
         }
     }

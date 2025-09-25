@@ -29,23 +29,26 @@
         }
     ],
     "require": {
-        "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
+        "php": "8.1 - 8.4",
         "ext-json": "*",
-        "psr/container": "^1.0|^2.0",
-        "psr/http-message": "^1.0|^2.0",
+        "psr/container": "^1.0 || ^2.0",
+        "psr/http-factory": "^1.1",
+        "psr/http-message": "^1.0 || ^2.0",
         "psr/http-message-implementation": "1.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "yiisoft/http": "^1.2"
     },
     "require-dev": {
-        "nyholm/psr7": "^1.8.2",
-        "phpunit/phpunit": "^10.5.45",
+        "httpsoft/http-message": "^1.1.6",
+        "maglnet/composer-require-checker": "^4.7.1",
+        "phpunit/phpunit": "^10.5.55",
+        "rector/rector": "^2.1",
         "roave/infection-static-analysis-plugin": "^1.35",
         "spatie/phpunit-watcher": "^1.24",
-        "vimeo/psalm": "^5.26.1 || ^6.8.6",
+        "vimeo/psalm": "^5.26.1 || ^6.13.1",
         "yiisoft/di": "^1.4",
-        "yiisoft/test-support": "^3.0.1"
+        "yiisoft/test-support": "^3.0.2"
     },
     "autoload": {
         "psr-4": {
@@ -55,14 +58,6 @@
     "autoload-dev": {
         "psr-4": {
             "Yiisoft\\Request\\Body\\Tests\\": "tests"
-        }
-    },
-    "extra": {
-        "config-plugin-options": {
-            "source-directory": "config"
-        },
-        "config-plugin": {
-            "di-web": "di-web.php"
         }
     },
     "config": {
