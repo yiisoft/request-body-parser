@@ -19,7 +19,7 @@ server request body selecting the parser according to the server request mime ty
 
 ## Requirements
 
-- PHP 7.4 or higher.
+- PHP 8.1 or higher.
 
 ## Installation
 
@@ -42,6 +42,37 @@ the middleware:
 ```php
 $requestBodyParser = $requestBodyParser->withParser('application/myformat', MyFormatParser::class);
 ``` 
+
+## Errors handling
+
+To handle parsing errors, pass an instance of `BadRequestHandlerInterface` to the `RequestBodyParser` middleware's constructor.
+[Yii Request Body Parser](yiisoft/request-body-parser) package provides the `BadRequestHandler` error handler by default.
+To use it, add it to the `RequestBodyParser` constructor.
+
+```php
+use Yiisoft\Request\Body\RequestBodyParser;
+use Yiisoft\Request\Body\BadRequestHandler;
+
+$responseFactory = $container->get(\Psr\Http\Message\ResponseFactoryInterface::class);
+$BadRequestHandler = new BadRequestHandler($responseFactory);
+
+$middleware = new RequestBodyParser($container, $BadRequestHandler);
+```
+
+or define the `BadRequestHandlerInterface` configuration in the [DI container](https://github.com/yiisoft/di):
+
+```php
+// config/web/di/request-body-parser.php
+use Yiisoft\Request\Body\BadRequestHandler;
+use Yiisoft\Request\Body\BadRequestHandlerInterface;
+
+return [
+    BadRequestHandlerInterface::class => BadRequestHandler::class,
+];
+```
+
+In case [Yii Request Body Parser](yiisoft/request-body-parser) package is used along with [Yii Config](https://github.com/yiisoft/config) plugin, the package is [configured](./config/di-web.php)
+automatically to use `Yiisoft\Request\Body\BadRequestHandler`.
 
 ## Documentation
 
