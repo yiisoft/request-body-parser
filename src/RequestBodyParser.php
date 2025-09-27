@@ -47,7 +47,7 @@ final class RequestBodyParser implements MiddlewareInterface
      */
     public function __construct(
         private readonly ContainerInterface $container,
-        private readonly BadRequestHandlerInterface|null $badRequestHandler
+        private readonly ?BadRequestHandlerInterface $badRequestHandler
     ) {
     }
 

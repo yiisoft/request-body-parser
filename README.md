@@ -46,23 +46,29 @@ $requestBodyParser = $requestBodyParser->withParser('application/myformat', MyFo
 ## Errors handling
 
 To handle parsing errors, pass an instance of `BadRequestHandlerInterface` to the `RequestBodyParser` middleware's constructor.
-[Yii Request Body Parser](yiisoft/request-body-parser) package provides the `BadRequestHandler` error handler by default.
-To use it, add it to the `RequestBodyParser` constructor.
+The [Yii Request Body Parser](yiisoft/request-body-parser) package provides the `BadRequestHandler` error handler by default.
+
+To use it, pass it to the `RequestBodyParser` middleware constructor.
 
 ```php
+use Psr\Http\Message\ResponseFactoryInterface;
 use Yiisoft\Request\Body\RequestBodyParser;
 use Yiisoft\Request\Body\BadRequestHandler;
 
-$responseFactory = $container->get(\Psr\Http\Message\ResponseFactoryInterface::class);
+$responseFactory = $container->get(ResponseFactoryInterface::class);
 $BadRequestHandler = new BadRequestHandler($responseFactory);
 
-$middleware = new RequestBodyParser($container, $BadRequestHandler);
+$middleware = new RequestBodyParser(
+    $container,
+    $badRequestHandler // pass the handler here
+);
 ```
 
 or define the `BadRequestHandlerInterface` configuration in the [DI container](https://github.com/yiisoft/di):
 
 ```php
 // config/web/di/request-body-parser.php
+
 use Yiisoft\Request\Body\BadRequestHandler;
 use Yiisoft\Request\Body\BadRequestHandlerInterface;
 
@@ -71,8 +77,17 @@ return [
 ];
 ```
 
-In case [Yii Request Body Parser](yiisoft/request-body-parser) package is used along with [Yii Config](https://github.com/yiisoft/config) plugin, the package is [configured](./config/di-web.php)
+> In case [Yii Request Body Parser](yiisoft/request-body-parser) package is used along with [Yii Config](https://github.com/yiisoft/config) plugin, the package is [configured](./config/di-web.php)
 automatically to use `BadRequestHandler`.
+
+To disable parsing errors handling pass `null` as the `badRequestHandler` parameter of the `RequestBodyParser` middleware constructor:
+
+```php
+$middleware = new Router(
+    $container,
+    null // disables parsing errors handling
+);
+```
 
 ## Documentation
 
