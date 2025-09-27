@@ -72,7 +72,7 @@ return [
 ```
 
 In case [Yii Request Body Parser](yiisoft/request-body-parser) package is used along with [Yii Config](https://github.com/yiisoft/config) plugin, the package is [configured](./config/di-web.php)
-automatically to use `Yiisoft\Request\Body\BadRequestHandler`.
+automatically to use `BadRequestHandler`.
 
 ## Documentation
 
