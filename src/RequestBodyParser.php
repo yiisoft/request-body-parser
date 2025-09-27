@@ -6,7 +6,6 @@ namespace Yiisoft\Request\Body;
 
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -16,8 +15,13 @@ use Yiisoft\Http\Header;
 use Yiisoft\Request\Body\Parser\JsonParser;
 
 use function array_key_exists;
+use function count;
+use function explode;
 use function is_array;
 use function is_object;
+use function str_contains;
+use function strtolower;
+use function trim;
 
 /**
  * The package is a PSR-15 middleware that allows parsing PSR-7 server request body selecting the parser according
@@ -28,8 +32,6 @@ use function is_object;
  */
 final class RequestBodyParser implements MiddlewareInterface
 {
-    private BadRequestHandlerInterface $badRequestHandler;
-
     /**
      * @var string[]
      * @psalm-var array<string, string>
@@ -37,14 +39,40 @@ final class RequestBodyParser implements MiddlewareInterface
     private array $parsers = [
         'application/json' => JsonParser::class,
     ];
-    private bool $ignoreBadRequestBody = false;
 
+    /**
+     * @param ContainerInterface $container PSR-11 container to create parsers.
+     * @param BadRequestHandlerInterface|null $badRequestHandler Handler for request parsing errors.
+     * If set to `null`, the request will continue processing unaltered.
+     */
     public function __construct(
-        ResponseFactoryInterface $responseFactory,
         private readonly ContainerInterface $container,
-        BadRequestHandlerInterface|null $badRequestHandler = null
+        private readonly ?BadRequestHandlerInterface $badRequestHandler
     ) {
-        $this->badRequestHandler = $badRequestHandler ?? new BadRequestHandler($responseFactory);
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        $parser = $this->getParser($this->getContentType($request));
+        if ($parser !== null) {
+            try {
+                /** @var mixed $parsed */
+                $parsed = $parser->parse((string)$request->getBody());
+                if ($parsed !== null && !is_object($parsed) && !is_array($parsed)) {
+                    $parserClass = $parser::class;
+                    throw new RuntimeException(
+                        "$parserClass::parse() return value must be an array, an object, or null."
+                    );
+                }
+                $request = $request->withParsedBody($parsed);
+            } catch (ParserException $e) {
+                if ($this->badRequestHandler !== null) {
+                    return $this->badRequestHandler->handle($request, $e);
+                }
+            }
+        }
+
+        return $handler->handle($request);
     }
 
     /**
@@ -90,44 +118,6 @@ final class RequestBodyParser implements MiddlewareInterface
             unset($new->parsers[$this->normalizeMimeType($mimeType)]);
         }
         return $new;
-    }
-
-    /**
-     * Makes the middleware to simple skip requests it cannot parse.
-     *
-     * @return self
-     */
-    public function ignoreBadRequestBody(): self
-    {
-        $new = clone $this;
-        $new->ignoreBadRequestBody = true;
-        return $new;
-    }
-
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
-        $parser = $this->getParser($this->getContentType($request));
-        if ($parser !== null) {
-            try {
-                /** @var mixed $parsed */
-                $parsed = $parser->parse((string)$request->getBody());
-                if ($parsed !== null && !is_object($parsed) && !is_array($parsed)) {
-                    $parserClass = $parser::class;
-                    throw new RuntimeException(
-                        "$parserClass::parse() return value must be an array, an object, or null."
-                    );
-                }
-                $request = $request->withParsedBody($parsed);
-            } catch (ParserException $e) {
-                if (!$this->ignoreBadRequestBody) {
-                    return $this->badRequestHandler
-                        ->withParserException($e)
-                        ->handle($request);
-                }
-            }
-        }
-
-        return $handler->handle($request);
     }
 
     /**
