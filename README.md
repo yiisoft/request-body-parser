@@ -83,7 +83,7 @@ automatically to use `BadRequestHandler`.
 To disable parsing errors handling pass `null` as the `badRequestHandler` parameter of the `RequestBodyParser` middleware constructor:
 
 ```php
-$middleware = new Router(
+$middleware = new RequestBodyParser(
     $container,
     null // disables parsing errors handling
 );
