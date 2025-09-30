@@ -2,7 +2,7 @@
 
 ## 1.2.1 under development
 
-- no changes in this release.
+- Enh #43: Refactor `RequestBodyParser` middleware fallback handling (@olegbaturin)
 
 ## 1.2.0 September 23, 2025
 

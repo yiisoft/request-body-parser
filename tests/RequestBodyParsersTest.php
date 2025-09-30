@@ -13,8 +13,10 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Yiisoft\Http\Header;
 use Yiisoft\Http\Status;
+use Yiisoft\Request\Body\BadRequestHandler;
 use Yiisoft\Request\Body\BadRequestHandlerInterface;
 use Yiisoft\Request\Body\Parser\JsonParser;
 use Yiisoft\Request\Body\ParserException;
@@ -32,14 +34,14 @@ final class RequestBodyParsersTest extends TestCase
         $container = $this->getContainerWithParser($containerId, $expectedOutput);
 
         $mimeType = 'test/test';
-        $bodyParser = $this
-            ->getRequestBodyParser($container)
+        $bodyParser = $this->getRequestBodyParser($container)
             ->withParser($mimeType, $containerId);
+        $catcher = new RequestCatcher();
 
-        $requestHandler = $this->createHandler();
-        $bodyParser->process($this->createMockRequest($mimeType), $requestHandler);
+        $bodyParser->process($this->createMockRequest($mimeType), $catcher);
+        $request = $catcher->getRequest();
 
-        $this->assertSame($expectedOutput, $requestHandler->getRequestParsedBody());
+        $this->assertSame($expectedOutput, $request->getParsedBody());
     }
 
     public function testWithParserWithEmptyParserClass(): void
@@ -49,53 +51,36 @@ final class RequestBodyParsersTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The parser class cannot be an empty string.');
-        $this
-            ->getRequestBodyParser($container)
+        $this->getRequestBodyParser($container)
             ->withParser('content/future', '');
     }
 
     public function testWithoutParsers(): void
     {
-        $container = $this->getContainerWithResponseFactory();
-        $bodyParser = $this
-            ->getRequestBodyParser($container)
+        $bodyParser = $this->getRequestBodyParser($this->getContainer())
             ->withoutParsers();
 
         $rawBody = '{"test":"value"}';
+        $catcher = new RequestCatcher();
 
-        $requestHandler = $this->createHandler();
-        $bodyParser->process($this->createMockRequest('application/json', $rawBody), $requestHandler);
+        $bodyParser->process($this->createMockRequest('application/json', $rawBody), $catcher);
+        $request = $catcher->getRequest();
 
-        $this->assertNull($requestHandler->getRequestParsedBody());
+        $this->assertNull($request->getParsedBody());
     }
 
     public function testWithoutParser(): void
     {
-        $container = $this->getContainerWithResponseFactory();
-        $bodyParser = $this
-            ->getRequestBodyParser($container)
+        $bodyParser = $this->getRequestBodyParser($this->getContainer())
             ->withoutParsers('application/json');
 
         $rawBody = '{"test":"value"}';
+        $catcher = new RequestCatcher();
 
-        $requestHandler = $this->createHandler();
-        $bodyParser->process($this->createMockRequest('application/json', $rawBody), $requestHandler);
+        $bodyParser->process($this->createMockRequest('application/json', $rawBody), $catcher);
+        $request = $catcher->getRequest();
 
-        $this->assertNull($requestHandler->getRequestParsedBody());
-    }
-
-    public function testWithBadRequestResponse(): void
-    {
-        $container = $this->getContainerWithResponseFactory();
-        $bodyParser = $this->getRequestBodyParser($container);
-
-        $rawBody = '{"test": invalid json}';
-
-        $requestHandler = $this->createHandler();
-        $response = $bodyParser->process($this->createMockRequest('application/json', $rawBody), $requestHandler);
-
-        $this->assertSame(Status::BAD_REQUEST, $response->getStatusCode());
-        $this->assertSame(Status::TEXTS[Status::BAD_REQUEST] . "\nInvalid JSON data in request body: Syntax error", (string) $response->getBody());
+        $this->assertNull($request->getParsedBody());
     }
 
     public function testWithoutBadRequestResponse(): void
@@ -103,29 +88,40 @@ final class RequestBodyParsersTest extends TestCase
         $containerId = 'test';
         $container = $this->getContainerWithParser($containerId, throwException: true);
         $mimeType = 'test/test';
-        $bodyParser = $this
-            ->getRequestBodyParser($container)
-            ->withParser($mimeType, $containerId)
-            ->ignoreBadRequestBody();
+        $bodyParser = $this->getRequestBodyParser($container)
+            ->withParser($mimeType, $containerId);
+        $catcher = new RequestCatcher();
 
-        $requestHandler = $this->createHandler();
-        $response = $bodyParser->process($this->createMockRequest($mimeType), $requestHandler);
+        $response = $bodyParser->process($this->createMockRequest($mimeType), $catcher);
 
         $this->assertSame(Status::OK, $response->getStatusCode());
     }
 
+    public function testWithDefaultBadRequestResponse(): void
+    {
+        $badResponseHandler = $this->createDefaultBadResponseHandler();
+        $bodyParser = $this->getRequestBodyParser($this->getContainer(), $badResponseHandler);
+
+        $rawBody = '{"test": invalid json}';
+        $catcher = new RequestCatcher();
+
+        $response = $bodyParser->process($this->createMockRequest('application/json', $rawBody), $catcher);
+
+        $this->assertSame(Status::BAD_REQUEST, $response->getStatusCode());
+        $this->assertSame(Status::TEXTS[Status::BAD_REQUEST] . "\n" . 'Invalid JSON data in request body: Syntax error', (string) $response->getBody());
+    }
+
     public function testWithCustomBadRequestResponse(): void
     {
-        $container = $this->getContainerWithResponseFactory();
-
         $customBody = 'custom response';
         $badResponseHandler = $this->createCustomBadResponseHandler($customBody);
 
-        $bodyParser = $this->getRequestBodyParser($container, $badResponseHandler);
+        $bodyParser = $this->getRequestBodyParser($this->getContainer(), $badResponseHandler);
 
         $rawBody = '{"test": invalid json}';
-        $requestHandler = $this->createHandler();
-        $response = $bodyParser->process($this->createMockRequest('application/json', $rawBody), $requestHandler);
+        $catcher = new RequestCatcher();
+
+        $response = $bodyParser->process($this->createMockRequest('application/json', $rawBody), $catcher);
 
         $this->assertSame(Status::BAD_REQUEST, $response->getStatusCode());
         $this->assertSame($customBody, (string) $response->getBody());
@@ -136,8 +132,7 @@ final class RequestBodyParsersTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The parser "invalidParser" cannot be found.');
 
-        $this
-            ->getRequestBodyParser($this->getContainerWithResponseFactory())
+        $this->getRequestBodyParser($this->getContainer())
             ->withParser('test/test', 'invalidParser');
     }
 
@@ -149,8 +144,7 @@ final class RequestBodyParsersTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid mime type.');
 
-        $this
-            ->getRequestBodyParser($container)
+        $this->getRequestBodyParser($container)
             ->withParser('invalid mimeType', $containerId);
     }
 
@@ -163,19 +157,12 @@ final class RequestBodyParsersTest extends TestCase
     #[TestWith(['myapp/json', 'MYAPP/JSON'])]
     public function testMimeTypeNormalization(string $parserType, string $contentType): void
     {
-        $middleware = (new RequestBodyParser(
-            new ResponseFactory(),
-            new SimpleContainer([
-                JsonParser::class => new JsonParser(),
-            ])
-        ))->withParser($parserType, JsonParser::class);
-        $request = new ServerRequest(
-            headers: [Header::CONTENT_TYPE => $contentType],
-            body: (new StreamFactory())->createStream('{"test":"value"}'),
-        );
+        $middleware = $this->getRequestBodyParser($this->getContainer())
+            ->withParser($parserType, JsonParser::class);
+        $rawBody = '{"test":"value"}';
         $catcher = new RequestCatcher();
 
-        $middleware->process($request, $catcher);
+        $middleware->process($this->createMockRequest($contentType, $rawBody), $catcher);
         $request = $catcher->getRequest();
 
         $this->assertSame(['test' => 'value'], $request->getParsedBody());
@@ -183,10 +170,7 @@ final class RequestBodyParsersTest extends TestCase
 
     public function testRequestWithoutContentType(): void
     {
-        $middleware = new RequestBodyParser(
-            new ResponseFactory(),
-            new SimpleContainer([JsonParser::class => new JsonParser()]),
-        );
+        $middleware = $this->getRequestBodyParser($this->getContainer());
         $request = new ServerRequest(
             body: (new StreamFactory())->createStream('{"test":"value"}'),
         );
@@ -201,25 +185,16 @@ final class RequestBodyParsersTest extends TestCase
 
     public function testImmutability(): void
     {
-        $middleware = new RequestBodyParser(
-            new ResponseFactory(),
-            new SimpleContainer([JsonParser::class => new JsonParser()]),
-        );
-        $this->assertNotSame($middleware, $middleware->ignoreBadRequestBody());
+        $middleware = $this->getRequestBodyParser($this->getContainer());
         $this->assertNotSame($middleware, $middleware->withoutParsers());
         $this->assertNotSame($middleware, $middleware->withParser('myapp/json', JsonParser::class));
     }
 
-    private function getContainerWithResponseFactory(): SimpleContainer
+    private function getContainer(): SimpleContainer
     {
-        return new SimpleContainer(
-            [
-                ResponseFactoryInterface::class => static function () {
-                    return new ResponseFactory();
-                },
-                JsonParser::class => new JsonParser(),
-            ]
-        );
+        return new SimpleContainer([
+            JsonParser::class => new JsonParser(),
+        ]);
     }
 
     private function getContainerWithParser(
@@ -229,7 +204,6 @@ final class RequestBodyParsersTest extends TestCase
     ): SimpleContainer {
         return new SimpleContainer(
             [
-                ResponseFactoryInterface::class => $this->createMock(ResponseFactoryInterface::class),
                 $id => new MockParser($expectedOutput, $throwException),
             ]
         );
@@ -245,15 +219,15 @@ final class RequestBodyParsersTest extends TestCase
         );
     }
 
-    private function createHandler(): BadRequestHandlerInterface
+    private function createHandler(): RequestHandlerInterface
     {
         $mockResponse = $this->createMock(ResponseInterface::class);
         $mockResponse
             ->method('getStatusCode')
             ->willReturn(Status::OK);
 
-        return new class ($mockResponse) implements BadRequestHandlerInterface {
-            private array|object|null $requestParsedBody;
+        return new class ($mockResponse) implements RequestHandlerInterface {
+            private array|object|null $requestParsedBody = null;
 
             public function __construct(
                 private readonly ResponseInterface $mockResponse,
@@ -270,12 +244,6 @@ final class RequestBodyParsersTest extends TestCase
             {
                 return $this->requestParsedBody;
             }
-
-            public function withParserException(ParserException $e): BadRequestHandlerInterface
-            {
-                // do nothing
-                return $this;
-            }
         };
     }
 
@@ -283,7 +251,12 @@ final class RequestBodyParsersTest extends TestCase
         SimpleContainer $container,
         BadRequestHandlerInterface|null $badRequestHandler = null
     ): RequestBodyParser {
-        return new RequestBodyParser(new ResponseFactory(), $container, $badRequestHandler);
+        return new RequestBodyParser($container, $badRequestHandler);
+    }
+
+    private function createDefaultBadResponseHandler(): BadRequestHandler
+    {
+        return new BadRequestHandler(new ResponseFactory());
     }
 
     private function createCustomBadResponseHandler(string $body): BadRequestHandlerInterface
@@ -295,17 +268,11 @@ final class RequestBodyParsersTest extends TestCase
             ) {
             }
 
-            public function handle(ServerRequestInterface $request): ResponseInterface
+            public function handle(ServerRequestInterface $request, ?ParserException $e = null): ResponseInterface
             {
                 $response = $this->responseFactory->createResponse(Status::BAD_REQUEST);
                 $response->getBody()->write($this->body);
                 return $response;
-            }
-
-            public function withParserException(ParserException $e): BadRequestHandlerInterface
-            {
-                // do nothing
-                return $this;
             }
         };
     }
