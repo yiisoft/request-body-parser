@@ -253,7 +253,7 @@ final class RequestBodyParsersTest extends TestCase
             ->willReturn(Status::OK);
 
         return new class ($mockResponse) implements BadRequestHandlerInterface {
-            private array|object|null $requestParsedBody;
+            private array|object|null $requestParsedBody = null;
 
             public function __construct(
                 private readonly ResponseInterface $mockResponse,
