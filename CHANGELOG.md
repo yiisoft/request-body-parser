@@ -1,6 +1,6 @@
 # Yii Request Body Parser Change Log
 
-## 1.2.1 under development
+## 1.2.1 December 21, 2025
 
 - Enh #49: Add PHP 8.5 support (@vjik)
 
