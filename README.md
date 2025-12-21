@@ -19,7 +19,7 @@ server request body selecting the parser according to the server request mime ty
 
 ## Requirements
 
-- PHP 7.4 or higher.
+- PHP 8.1 - 8.5.
 
 ## Installation
 

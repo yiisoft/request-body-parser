@@ -2,7 +2,7 @@
 
 ## 1.2.1 under development
 
-- no changes in this release.
+- Enh #49: Add PHP 8.5 support (@vjik)
 
 ## 1.2.0 September 23, 2025
 
