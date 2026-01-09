@@ -1,8 +1,12 @@
 # Yii Request Body Parser Change Log
 
-## 1.2.1 under development
+## 1.2.2 under development
 
 - Enh #43: Refactor `RequestBodyParser` middleware fallback handling (@olegbaturin)
+
+## 1.2.1 December 21, 2025
+
+- Enh #49: Add PHP 8.5 support (@vjik)
 
 ## 1.2.0 September 23, 2025
 
