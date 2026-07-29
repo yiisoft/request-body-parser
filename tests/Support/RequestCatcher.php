@@ -11,7 +11,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class RequestCatcher implements RequestHandlerInterface
 {
-    private ServerRequestInterface|null $request = null;
+    private ?ServerRequestInterface $request = null;
 
     public function isCaught(): bool
     {

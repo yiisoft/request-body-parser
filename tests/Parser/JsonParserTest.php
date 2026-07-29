@@ -7,6 +7,11 @@ namespace Yiisoft\Request\Body\Tests\Parser;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Request\Body\Parser\JsonParser;
 use Yiisoft\Request\Body\ParserException;
+use stdClass;
+
+use function chr;
+
+use const JSON_INVALID_UTF8_IGNORE;
 
 final class JsonParserTest extends TestCase
 {
@@ -20,7 +25,7 @@ final class JsonParserTest extends TestCase
 
     public function testWithoutAssoc(): void
     {
-        $object = new \stdClass();
+        $object = new stdClass();
         $object->test = 'value';
 
         $parser = new JsonParser(false);

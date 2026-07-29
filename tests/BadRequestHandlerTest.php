@@ -26,7 +26,7 @@ final class BadRequestHandlerTest extends TestCase
         $response = $this
             ->createHandler()
             ->handle($this->createRequest());
-        $this->assertEquals(Status::TEXTS[Status::BAD_REQUEST], (string)$response->getBody());
+        $this->assertEquals(Status::TEXTS[Status::BAD_REQUEST], (string) $response->getBody());
     }
 
     private function createHandler(): BadRequestHandler

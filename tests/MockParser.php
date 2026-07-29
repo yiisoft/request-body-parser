@@ -12,8 +12,7 @@ final class MockParser implements ParserInterface
     public function __construct(
         private readonly array|object|null $response,
         private readonly bool $throwException,
-    ) {
-    }
+    ) {}
 
     public function parse(string $rawBody)
     {
