@@ -12,6 +12,9 @@ use function is_array;
 use function is_object;
 use function json_decode;
 
+use const JSON_INVALID_UTF8_IGNORE;
+use const JSON_THROW_ON_ERROR;
+
 /**
  * Parses `application/json` requests where JSON is in the body.
  */
@@ -28,8 +31,7 @@ final class JsonParser implements ParserInterface
         private readonly bool $convertToAssociativeArray = true,
         private readonly int $depth = 512,
         private readonly int $options = JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_IGNORE,
-    ) {
-    }
+    ) {}
 
     public function parse(string $rawBody)
     {

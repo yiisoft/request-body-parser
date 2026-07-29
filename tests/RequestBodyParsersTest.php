@@ -167,7 +167,7 @@ final class RequestBodyParsersTest extends TestCase
             new ResponseFactory(),
             new SimpleContainer([
                 JsonParser::class => new JsonParser(),
-            ])
+            ]),
         ))->withParser($parserType, JsonParser::class);
         $request = new ServerRequest(
             headers: [Header::CONTENT_TYPE => $contentType],
@@ -218,7 +218,7 @@ final class RequestBodyParsersTest extends TestCase
                     return new ResponseFactory();
                 },
                 JsonParser::class => new JsonParser(),
-            ]
+            ],
         );
     }
 
@@ -231,11 +231,11 @@ final class RequestBodyParsersTest extends TestCase
             [
                 ResponseFactoryInterface::class => $this->createMock(ResponseFactoryInterface::class),
                 $id => new MockParser($expectedOutput, $throwException),
-            ]
+            ],
         );
     }
 
-    private function createMockRequest(string $contentType, string|null $rawBody = null): ServerRequestInterface
+    private function createMockRequest(string $contentType, ?string $rawBody = null): ServerRequestInterface
     {
         return new ServerRequest(
             method: 'POST',
@@ -257,8 +257,7 @@ final class RequestBodyParsersTest extends TestCase
 
             public function __construct(
                 private readonly ResponseInterface $mockResponse,
-            ) {
-            }
+            ) {}
 
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
@@ -281,7 +280,7 @@ final class RequestBodyParsersTest extends TestCase
 
     private function getRequestBodyParser(
         SimpleContainer $container,
-        BadRequestHandlerInterface|null $badRequestHandler = null
+        ?BadRequestHandlerInterface $badRequestHandler = null,
     ): RequestBodyParser {
         return new RequestBodyParser(new ResponseFactory(), $container, $badRequestHandler);
     }
@@ -291,9 +290,8 @@ final class RequestBodyParsersTest extends TestCase
         return new class ($body, new ResponseFactory()) implements BadRequestHandlerInterface {
             public function __construct(
                 private readonly string $body,
-                private readonly ResponseFactoryInterface $responseFactory
-            ) {
-            }
+                private readonly ResponseFactoryInterface $responseFactory,
+            ) {}
 
             public function handle(ServerRequestInterface $request): ResponseInterface
             {

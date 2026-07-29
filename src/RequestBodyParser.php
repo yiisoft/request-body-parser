@@ -18,6 +18,7 @@ use Yiisoft\Request\Body\Parser\JsonParser;
 use function array_key_exists;
 use function is_array;
 use function is_object;
+use function count;
 
 /**
  * The package is a PSR-15 middleware that allows parsing PSR-7 server request body selecting the parser according
@@ -42,7 +43,7 @@ final class RequestBodyParser implements MiddlewareInterface
     public function __construct(
         ResponseFactoryInterface $responseFactory,
         private readonly ContainerInterface $container,
-        BadRequestHandlerInterface|null $badRequestHandler = null
+        ?BadRequestHandlerInterface $badRequestHandler = null,
     ) {
         $this->badRequestHandler = $badRequestHandler ?? new BadRequestHandler($responseFactory);
     }
@@ -110,11 +111,11 @@ final class RequestBodyParser implements MiddlewareInterface
         if ($parser !== null) {
             try {
                 /** @var mixed $parsed */
-                $parsed = $parser->parse((string)$request->getBody());
+                $parsed = $parser->parse((string) $request->getBody());
                 if ($parsed !== null && !is_object($parsed) && !is_array($parsed)) {
                     $parserClass = $parser::class;
                     throw new RuntimeException(
-                        "$parserClass::parse() return value must be an array, an object, or null."
+                        "$parserClass::parse() return value must be an array, an object, or null.",
                     );
                 }
                 $request = $request->withParsedBody($parsed);
