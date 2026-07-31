@@ -1,12 +1,12 @@
-name: static analysis
+name: Composer require checker
 
 on:
   pull_request:
     paths: &paths
       - 'src/**'
-      - 'psalm.xml'
+      - 'tests/**'
       - 'composer.json'
-      - '.github/workflows/static.yml'
+      - '.github/workflows/composer-require-checker.yml'
   push:
     branches: ['master']
     paths: *paths
@@ -19,8 +19,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  psalm:
-    uses: yiisoft/actions/.github/workflows/psalm.yml@master
+  composer-require-checker:
+    uses: yiisoft/actions/.github/workflows/composer-require-checker.yml@master
     with:
       os: >-
         ['ubuntu-latest']
